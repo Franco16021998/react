@@ -9,17 +9,18 @@ import { useRouter } from "next/navigation";
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth() || {};
   const router = useRouter();
-  const token = localStorage.getItem("token");
-  console.log(token);
+
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
     if (!token) {
       router.push("/login");
     }
   }, [loading, user, router]);
 
-//   if (token) {
-//     return <p>Cargando...</p>;
-//   }
+  //   if (token) {
+  //     return <p>Cargando...</p>;
+  //   }
 
   return <>{children}</>;
 };
