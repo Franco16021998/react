@@ -1,5 +1,7 @@
 import "@/app/ui/global.css";
 import { inter } from "@/app/ui/fonts";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./context/ProtectedRoute";
 
 export default function RootLayout({
   children,
@@ -7,8 +9,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} antialiased`}>{children}</body>
+    <html>
+      <body>
+        <ProtectedRoute>
+          <AuthProvider>{children}</AuthProvider>
+        </ProtectedRoute>
+      </body>
     </html>
   );
 }
