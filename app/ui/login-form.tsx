@@ -23,9 +23,10 @@ export default function LoginForm() {
 
   const router = useRouter();
   const { loginForm } = useAuth() || {};
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
     if (token) {
       router.push("/dashboard");
     }
