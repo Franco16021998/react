@@ -7,7 +7,7 @@ import { PowerIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "@/app/context/AuthContext";
 
 export default function SideNav() {
-  const { logout } = useAuth() || {};
+  const { logout, user } = useAuth() || {};
 
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
@@ -22,6 +22,9 @@ export default function SideNav() {
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks />
         <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
+        <div className="text-xl font-bold text-transparent bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text p-2 rounded text-center shadow-lg">
+          {user?.userName}
+        </div>
         <form
           onSubmit={(e) => {
             e.preventDefault();

@@ -13,19 +13,14 @@ import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 
 interface User {
-  email: string;
+  userName: string;
   // Añade otras propiedades del usuario según sea necesario
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  loginForm: (
-    userName: string,
-    password: string,
-    companyId: string,
-    subsidiaryId: string
-  ) => Promise<void>;
+  loginForm: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -45,25 +40,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false);
   }, []);
 
-  const loginForm = async (
-    userName: string,
-    password: string,
-    companyId: string,
-    subsidiaryId: string
-  ) => {
+  const loginForm = async (username: string, password: string) => {
     try {
       const { data } = await axios.post(
-        "https://api.anaprevention.com/v1/authentication/authenticate",
+        "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/login",
         {
-          userName,
+          username,
           password,
-          companyId,
-          subsidiaryId,
         }
       );
-      console.log(data);
       const decoded: User = jwtDecode(data.result.token);
-      console.log(decoded);
       setUser(decoded);
       localStorage.setItem("token", data.result.token);
       router.push("/dashboard");

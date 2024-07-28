@@ -9,20 +9,26 @@ import {
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "./button";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
-    userName: "admin",
-    password: "Admin2",
-    companyId: "721b327e-82be-4345-ac30-3c980b804f3d",
-    subsidiaryId: "ad42550e-8b89-418a-b46c-e3401260e1ee",
+    username: "",
+    password: "",
   });
 
   const router = useRouter();
   const { loginForm } = useAuth() || {};
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -33,14 +39,10 @@ export default function LoginForm() {
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log(e);
     e.preventDefault();
     if (loginForm) {
-      await loginForm(
-        formData.userName,
-        formData.password,
-        formData.companyId,
-        formData.subsidiaryId
-      );
+      await loginForm(formData.username, formData.password);
     }
 
     // try {
@@ -73,10 +75,10 @@ export default function LoginForm() {
             <div className="relative">
               <input
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                // id="email"
-                // type="email"
-                // name="email"
-                placeholder="Enter your email address"
+                placeholder="Entra tu usuario"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
                 required
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -95,9 +97,11 @@ export default function LoginForm() {
                 id="password"
                 type="password"
                 name="password"
-                placeholder="Enter password"
+                placeholder="Entra tu contraseña"
                 required
                 minLength={6}
+                value={formData.password}
+                onChange={handleChange}
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>

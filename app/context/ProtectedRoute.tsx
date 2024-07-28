@@ -18,10 +18,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     }
   }, [loading, user, router]);
 
-  //   if (token) {
-  //     return <p>Cargando...</p>;
-  //   }
-
   return <>{children}</>;
 };
 
