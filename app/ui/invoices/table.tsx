@@ -1,8 +1,9 @@
-import Image from 'next/image';
-import { UpdateInvoice, DeleteInvoice } from '@/app/ui/invoices/buttons';
-import InvoiceStatus from '@/app/ui/invoices/status';
-import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
-import { fetchFilteredInvoices } from '@/app/lib/data';
+import Image from "next/image";
+import { UpdateInvoice, DeleteInvoice } from "@/app/ui/invoices/buttons";
+import InvoiceStatus from "@/app/ui/invoices/status";
+import { formatDateToLocal, formatCurrency } from "@/app/lib/utils";
+import { fetchFilteredInvoices } from "@/app/lib/data";
+import TableModel from "@/app/components/commons/TableModel";
 
 export default async function InvoicesTable({
   query,
@@ -12,6 +13,33 @@ export default async function InvoicesTable({
   currentPage: number;
 }) {
   const invoices = await fetchFilteredInvoices(query, currentPage);
+
+  const columns = [
+    {
+      name: "Customer",
+      key: "name",
+    },
+    {
+      name: "Email",
+      key: "email",
+    },
+    {
+      name: "Amount",
+      key: "amount",
+    },
+    {
+      name: "Date",
+      key: "date",
+    },
+    {
+      name: "Status",
+      key: "status",
+    },
+    {
+      name: "Actions",
+      key: "actions",
+    },
+  ];
 
   return (
     <div className="mt-6 flow-root">
@@ -54,7 +82,7 @@ export default async function InvoicesTable({
               </div>
             ))}
           </div>
-          <table className="hidden min-w-full text-gray-900 md:table">
+          {/* <table className="hidden min-w-full text-gray-900 md:table">
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
@@ -116,7 +144,8 @@ export default async function InvoicesTable({
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table> */}
+          <TableModel invoices={invoices} columns={columns} />
         </div>
       </div>
     </div>
