@@ -22,6 +22,8 @@ interface AuthContextType {
   loading: boolean;
   loginForm: (username: string, password: string) => Promise<void>;
   logout: () => void;
+  validateToken: () => Promise<boolean>;
+  refreshToken: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,12 +34,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const decoded: User = jwtDecode(token);
-      setUser(decoded);
-    }
-    setLoading(false);
+    const initializeAuth = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const isValid = await validateToken();
+        if (isValid) {
+          const decoded: User = jwtDecode(token);
+          setUser(decoded);
+        } else {
+          await refreshToken();
+        }
+      }
+      setLoading(false);
+    };
+
+    initializeAuth();
   }, []);
 
   const loginForm = async (username: string, password: string) => {
@@ -49,12 +60,55 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           password,
         }
       );
-      const decoded: User = jwtDecode(data.result.token);
+      const decoded: User = jwtDecode(data.token);
+      console.log(decoded);
       setUser(decoded);
-      localStorage.setItem("token", data.result.token);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
+
       router.push("/dashboard");
     } catch (error) {
       console.error("Error during login", error);
+    }
+  };
+
+  const validateToken = async (): Promise<boolean> => {
+    const token = localStorage.getItem("token");
+    if (!token) return false;
+
+    try {
+      const { data } = await axios.post(
+        "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return data === "Token is valid" ? true : false;
+    } catch (error) {
+      console.error("Error validating token", error);
+      return false;
+    }
+  };
+  const refreshToken = async (): Promise<void> => {
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    try {
+      const { data } = await axios.post(
+        "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/refreshToken",
+        {
+          refreshToken,
+        }
+      );
+      const decoded: User = jwtDecode(data.token);
+      setUser(decoded);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
+    } catch (error) {
+      console.error("Error refreshing token", error);
+      logout();
     }
   };
 
@@ -63,9 +117,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("token");
     router.push("/login");
   };
-
   return (
-    <AuthContext.Provider value={{ user, loginForm, logout, loading }}>
+    <AuthContext.Provider
+      value={{ user, loginForm, logout, loading, validateToken, refreshToken }}
+    >
       {children}
     </AuthContext.Provider>
   );
