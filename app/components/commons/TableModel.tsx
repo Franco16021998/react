@@ -1,18 +1,15 @@
 import Image from "next/image";
+import { Create, Update, Delete } from "./ButtonsActions";
 
-interface Invoice {
-  id: string;
-  image_url: string;
-  name: string;
-  email: string;
-  // Añade otras propiedades del usuario según sea necesario
+interface Element {
+  [key: string]: string;
 }
 
 export default function TableModel({
-  invoices,
+  elements,
   columns,
 }: {
-  invoices: Invoice[];
+  elements: Element[];
   columns: { name: string; key: string }[];
 }) {
   return (
@@ -49,22 +46,22 @@ export default function TableModel({
         </tr>
       </thead>
       <tbody className="bg-white">
-        {invoices?.map((invoice) => (
+        {elements?.map((items) => (
           <tr
-            key={invoice.id}
+            key={items.id}
             className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
           >
             {columns.map((column) => (
               <td key={column.key} className="whitespace-nowrap py-3 pl-6 pr-3">
                 <div className="flex items-center gap-3">
                   {/* <Image
-                    src={invoice.image_url}
+                    src={items.image_url}
                     className="rounded-full"
                     width={28}
                     height={28}
-                    alt={`${invoice.name}'s profile picture`}
+                    alt={`${items.name}'s profile picture`}
                   /> */}
-                  {/* <p>{invoice[column.key]}</p> */}
+                  <p>{items[column.key]}</p>
                 </div>
               </td>
             ))}
@@ -82,21 +79,13 @@ export default function TableModel({
               </div>
             </td>
             <td className="whitespace-nowrap px-3 py-3">{invoice.email}</td> */}
-            {/* <td className="whitespace-nowrap px-3 py-3">
-              {formatCurrency(invoice.amount)}
-            </td>
-            <td className="whitespace-nowrap px-3 py-3">
-              {formatDateToLocal(invoice.date)}
-            </td>
-            <td className="whitespace-nowrap px-3 py-3">
-              <InvoiceStatus status={invoice.status} />
-            </td>
+
             <td className="whitespace-nowrap py-3 pl-6 pr-3">
               <div className="flex justify-end gap-3">
-                <UpdateInvoice id={invoice.id} />
-                <DeleteInvoice id={invoice.id} />
+                <Update id={items.id} />
+                <Delete id={items.id} />
               </div>
-            </td> */}
+            </td>
           </tr>
         ))}
       </tbody>

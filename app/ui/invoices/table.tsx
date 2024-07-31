@@ -27,17 +27,13 @@ export default async function InvoicesTable({
       name: "Amount",
       key: "amount",
     },
-    {
-      name: "Date",
-      key: "date",
-    },
+    // {
+    //   name: "Date",
+    //   key: "date",
+    // },
     {
       name: "Status",
       key: "status",
-    },
-    {
-      name: "Actions",
-      key: "actions",
     },
   ];
 
@@ -145,7 +141,7 @@ export default async function InvoicesTable({
               ))}
             </tbody>
           </table> */}
-          <TableModel invoices={invoices} columns={columns} />
+          <TableModel elements={invoices as any[]} columns={columns} />
         </div>
       </div>
     </div>
