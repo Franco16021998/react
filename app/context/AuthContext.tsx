@@ -72,6 +72,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
 
+      document.cookie = `token=${data.token}; path=/; secure; samesite=lax`;
+      document.cookie = `refreshToken=${data.refreshToken}; path=/; secure; samesite=lax`;
+
       router.push("/dashboard");
     } catch (error) {
       console.error("Error during login", error);
@@ -117,6 +120,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(decoded);
       localStorage.setItem("token", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
+      document.cookie = `token=${data.token}; path=/; secure; samesite=lax`;
+      document.cookie = `refreshToken=${data.refreshToken}; path=/; secure; samesite=lax`;
     } catch (error) {
       console.error("Error refreshing token", error);
       logout();
