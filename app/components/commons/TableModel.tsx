@@ -1,5 +1,9 @@
+// "use client";
+
 import Image from "next/image";
 import { Create, Update, Delete } from "./ButtonsActions";
+// import { useSelector } from "react-redux";
+// import { RootState } from "@/app/theme/store";
 
 interface Element {
   [key: string]: string;
@@ -12,6 +16,8 @@ export default function TableModel({
   elements: Element[];
   columns: { name: string; key: string }[];
 }) {
+  // const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
+
   return (
     <table className="hidden min-w-full text-gray-900 md:table">
       <thead className="rounded-lg text-left text-sm font-normal">

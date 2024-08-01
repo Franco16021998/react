@@ -1,11 +1,11 @@
 import Pagination from "@/app/ui/invoices/pagination";
 import Search from "@/app/ui/search";
-import Table from "@/app/ui/invoices/table";
+import Table from "@/app/ui/projects/table";
 import { CreateInvoice } from "@/app/ui/invoices/buttons";
 import { lusitana } from "@/app/ui/fonts";
 import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
-import { fetchProjectsPages } from "@/app/actions/projects";
+import { fetchProjectsPagesNumberPages } from "@/app/actions/projects";
 
 export default async function Page({
   searchParams,
@@ -19,7 +19,7 @@ export default async function Page({
   const currentPage = Number(searchParams?.page) || 1;
 
   // Llamada al servidor para obtener el número total de páginas
-  const totalPages = await fetchProjectsPages(query);
+  const totalPages = await fetchProjectsPagesNumberPages(query);
   console.log(totalPages)
 
   return (

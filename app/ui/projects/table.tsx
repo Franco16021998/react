@@ -4,6 +4,7 @@ import InvoiceStatus from "@/app/ui/invoices/status";
 import { formatDateToLocal, formatCurrency } from "@/app/lib/utils";
 import { fetchFilteredInvoices } from "@/app/lib/data";
 import TableModel from "@/app/components/commons/TableModel";
+import { fetchProjectsPages } from "@/app/actions/projects";
 
 export default async function InvoicesTable({
   query,
@@ -12,28 +13,16 @@ export default async function InvoicesTable({
   query: string;
   currentPage: number;
 }) {
-  const invoices = await fetchFilteredInvoices(query, currentPage);
+  const projects = await fetchProjectsPages(query);
 
   const columns = [
     {
-      name: "Customer",
-      key: "name",
+      name: "Codigo",
+      key: "code",
     },
     {
-      name: "Email",
-      key: "email",
-    },
-    {
-      name: "Amount",
-      key: "amount",
-    },
-    // {
-    //   name: "Date",
-    //   key: "date",
-    // },
-    {
-      name: "Status",
-      key: "status",
+      name: "Descripcion",
+      key: "description",
     },
   ];
 
@@ -42,7 +31,7 @@ export default async function InvoicesTable({
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
           <div className="md:hidden">
-            {invoices?.map((invoice) => (
+            {/* {invoices?.map((invoice) => (
               <div
                 key={invoice.id}
                 className="mb-2 w-full rounded-md bg-white p-4"
@@ -76,9 +65,9 @@ export default async function InvoicesTable({
                   </div>
                 </div>
               </div>
-            ))}
+            ))} */}
           </div>
-          <TableModel elements={invoices as any[]} columns={columns} />
+          <TableModel elements={projects as any[]} columns={columns} />
         </div>
       </div>
     </div>
