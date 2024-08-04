@@ -4,6 +4,8 @@ import { z } from "zod";
 import { sql } from "@vercel/postgres";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import axios from "axios";
 
 const FormSchema = z.object({
   id: z.string(),
@@ -19,13 +21,33 @@ const FormSchema = z.object({
   date: z.string(),
 });
 
+const FormSchemaProject = z.object({
+  id: z.string(),
+  code: z.string({
+    invalid_type_error: "Please select a customer.",
+  }),
+  description: z.string({
+    invalid_type_error: "Please select a customer.",
+  }),
+  date: z.string(),
+});
+
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
+const CreateProject = FormSchemaProject.omit({ id: true, date: true });
 
 export type State = {
   errors?: {
     customerId?: string[];
     amount?: string[];
     status?: string[];
+  };
+  message?: string | null;
+};
+
+export type StateProjects = {
+  errors?: {
+    description?: string[];
+    code?: string[];
   };
   message?: string | null;
 };
@@ -60,6 +82,74 @@ export async function createInvoice(prevState: State, formData: FormData) {
 
   revalidatePath("/dashboard/invoices");
   redirect("/dashboard/invoices");
+
+  // Test it out:
+}
+
+export async function createProject(prevState: StateProjects, formData: FormData) {
+  const validatedFields = CreateProject.safeParse({
+    code: formData.get("code"),
+    description: formData.get("description"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Create Invoice.",
+    };
+  }
+  const { code, description } = validatedFields.data;
+  // const amountInCents = amount * 100;
+  // const date = new Date().toISOString().split("T")[0];
+
+  try {
+    const token = cookies().get("token")?.value;
+
+    // if (!token) {
+    //   throw new Error("No token found");
+    // }
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      await axios.post(
+        "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/projects",
+        {
+          code: code,
+          description: description,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      revalidatePath("/dashboard/projects");
+      redirect("/dashboard/projects");
+    }
+
+    // console.log("aaa");
+    // console.log("aaa", response);
+
+    // const projectCount = response.data.length;
+    // return response;
+  } catch (error) {
+    // console.log(req);
+    console.error("Error fetching projects:", error);
+    // throw new Error("Failed to fetch projects.");
+  }
+
+  revalidatePath("/dashboard/projects");
+  redirect("/dashboard/projects");
 
   // Test it out:
 }

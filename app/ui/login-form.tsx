@@ -42,7 +42,8 @@ export default function LoginForm() {
     console.log(e);
     e.preventDefault();
     if (loginForm) {
-      await loginForm(formData.username, formData.password);
+      const a = await loginForm(formData.username, formData.password);
+      console.log(a);
     }
 
     // try {

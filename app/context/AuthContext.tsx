@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Estado para el mensaje de error
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -58,17 +59,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         {
           username,
           password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+          },
         }
       );
+      console.log(data);
       const decoded: User = jwtDecode(data.token);
-      console.log(decoded);
       setUser(decoded);
       localStorage.setItem("token", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
 
+      document.cookie = `token=${data.token}; path=/; secure; samesite=lax`;
+      document.cookie = `refreshToken=${data.refreshToken}; path=/; secure; samesite=lax`;
+
       router.push("/dashboard");
     } catch (error) {
       console.error("Error during login", error);
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        setErrorMessage("Usuario o contraseña inválidos"); // Establece el mensaje de error
+      } else {
+        setErrorMessage("Ocurrió un error durante el inicio de sesión");
+      }
     }
   };
 
@@ -106,6 +120,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(decoded);
       localStorage.setItem("token", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
+      document.cookie = `token=${data.token}; path=/; secure; samesite=lax`;
+      document.cookie = `refreshToken=${data.refreshToken}; path=/; secure; samesite=lax`;
     } catch (error) {
       console.error("Error refreshing token", error);
       logout();
@@ -121,6 +137,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{ user, loginForm, logout, loading, validateToken, refreshToken }}
     >
+      {errorMessage && <p>{errorMessage}</p>}{" "}
+      {/* Muestra el mensaje de error */}
       {children}
     </AuthContext.Provider>
   );

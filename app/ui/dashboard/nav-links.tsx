@@ -15,18 +15,27 @@ import { RootState } from "../../theme/store";
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 const links = [
-  { name: "Inicio", href: "/dashboard", icon: HomeIcon },
+  // { name: "Inicio", href: "/dashboard", icon: HomeIcon },
+  // {
+  //   name: "Invoices",
+  //   href: "/dashboard/invoices",
+  //   icon: DocumentDuplicateIcon,
+  // },
+  // {
+  //   name: "Usuarios",
+  //   href: "/dashboard/security/users",
+  //   icon: UserIcon,
+  // },
   {
-    name: "Invoices",
-    href: "/dashboard/invoices",
-    icon: DocumentDuplicateIcon,
-  },
-  {
-    name: "Usuarios",
-    href: "/dashboard/security/users",
+    name: "Proyectos",
+    href: "/dashboard/projects",
     icon: UserIcon,
   },
-  { name: "Customers", href: "/dashboard/customers", icon: UserGroupIcon },
+  // {
+  //   name: "Lista de entregables",
+  //   href: "/dashboard/delivery",
+  //   icon: UserIcon,
+  // },
 ];
 
 export default function NavLinks() {
