@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import { UpdateInvoice, DeleteInvoice } from "@/app/ui/invoices/buttons";
 import InvoiceStatus from "@/app/ui/invoices/status";
@@ -9,11 +11,16 @@ import { fetchProjectsPages } from "@/app/actions/projects";
 export default async function InvoicesTable({
   query,
   currentPage,
+  elements,
 }: {
   query: string;
   currentPage: number;
+  elements: {
+    list: any[];
+    total: number;
+  };
 }) {
-  const projects = await fetchProjectsPages(query);
+  // const projects = await fetchProjectsPages(query, currentPage);
 
   const columns = [
     {
@@ -67,7 +74,7 @@ export default async function InvoicesTable({
               </div>
             ))} */}
           </div>
-          <TableModel elements={projects as any[]} columns={columns} />
+          <TableModel elements={elements?.list as any[]} columns={columns}  />
         </div>
       </div>
     </div>
