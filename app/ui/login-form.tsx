@@ -34,7 +34,7 @@ export default function LoginForm() {
     const token = localStorage.getItem("token");
 
     if (token) {
-      router.push("/dashboard");
+      router.push("/dashboard/projects");
     }
   }, [router]);
 

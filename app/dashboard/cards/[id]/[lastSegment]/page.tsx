@@ -1,22 +1,16 @@
 import Pagination from "@/app/ui/invoices/pagination";
 import Search from "@/app/ui/search";
-import Table from "@/app/ui/delivery/table";
-import { CreateInvoice } from "@/app/ui/invoices/buttons";
+import Table from "@/app/ui/cards/table";
 import { lusitana } from "@/app/ui/fonts";
 import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
-import {
-  fetchDeliveryPages,
-  fetchProjectId,
-  fetchProjectsAll,
-} from "@/app/actions/projects";
-import ProjectTable from "../TItle";
+import { fetchCardsPages } from "@/app/actions/projects";
 
 export default async function Page({
   params,
   searchParams,
 }: {
-  params: { id: string };
+  params: { id: string; lastSegment: string };
   searchParams?: {
     query?: string;
     page?: string;
@@ -26,33 +20,29 @@ export default async function Page({
   const currentPage = Number(searchParams?.page) || 1;
 
   // Llamada al servidor para obtener el número total de páginas
-  const totalPages = await fetchDeliveryPages(query, currentPage);
-  const idProject = await fetchProjectId(params.id);
-  const projects = await fetchProjectsAll();
-  console.log("idProject", projects);
+  const cards = await fetchCardsPages(params.id, params.lastSegment);
+  console.log("cards", cards);
 
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
         <h1 className={`${lusitana.className} text-2xl`}>
-          Lista de entregables
+          Lista de cartas
         </h1>
       </div>
       {/* <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Buscar proyectos..." />
       </div> */}
 
-      <ProjectTable projects={projects} project={idProject?.data} />
-
-      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+      {/* <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Buscar entregables..." />
-      </div>
+      </div> */}
 
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} elements={totalPages} />
+        <Table query={query} currentPage={currentPage} elements={cards} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
-        <Pagination totalPages={totalPages?.total} />
+        {/* <Pagination totalPages={totalPages?.total} /> */}
       </div>
     </div>
   );
