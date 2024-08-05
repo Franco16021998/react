@@ -32,8 +32,17 @@ const FormSchemaProject = z.object({
   date: z.string(),
 });
 
+const FormSchemaAttachment = z.object({
+  id: z.string(),
+  fileContent: z.string(),
+  fileName: z.string(),
+  comentarios: z.string(),
+  idLetter: z.string(),
+});
+
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 const CreateProject = FormSchemaProject.omit({ id: true, date: true });
+const CreateAttachment = FormSchemaAttachment.omit({ id: true });
 
 export type State = {
   errors?: {
@@ -48,6 +57,15 @@ export type StateProjects = {
   errors?: {
     description?: string[];
     code?: string[];
+  };
+  message?: string | null;
+};
+
+export type StateAttachment = {
+  errors?: {
+    fileContent?: string[];
+    fileName?: string[];
+    comentarios?: string[];
   };
   message?: string | null;
 };
@@ -86,7 +104,10 @@ export async function createInvoice(prevState: State, formData: FormData) {
   // Test it out:
 }
 
-export async function createProject(prevState: StateProjects, formData: FormData) {
+export async function createProject(
+  prevState: StateProjects,
+  formData: FormData
+) {
   const validatedFields = CreateProject.safeParse({
     code: formData.get("code"),
     description: formData.get("description"),
@@ -150,6 +171,71 @@ export async function createProject(prevState: StateProjects, formData: FormData
 
   revalidatePath("/dashboard/projects");
   redirect("/dashboard/projects");
+
+  // Test it out:
+}
+
+export async function createAttachment(
+  prevState: StateAttachment,
+  formData: FormData
+) {
+  const validatedFields = CreateAttachment.safeParse({
+    fileContent: formData.get("fileContent"),
+    fileName: formData.get("fileName"),
+    comentarios: formData.get("comentarios"),
+    idLetter: formData.get("idLetter"),
+  });
+
+  console.log("aaa", formData);
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Create Invoice.",
+    };
+  }
+  const { fileContent, fileName, comentarios, idLetter } = validatedFields.data;
+
+  try {
+    const token = cookies().get("token")?.value;
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      const response = await axios.patch(
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters/${idLetter}?action=upload`,
+        {
+          fileContent: fileContent,
+          fileName: fileName,
+          comentarios: comentarios,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log('asdasdasdas',response);
+
+      revalidatePath("/dashboard/attachments/" + idLetter);
+      redirect("/dashboard/attachments/" + idLetter);
+    }
+  } catch (error) {
+    // console.log(req);
+    console.error("Error fetching projects:", error);
+    // throw new Error("Failed to fetch projects.");
+  }
+
+  revalidatePath("/dashboard/attachments/" + idLetter);
+  redirect("/dashboard/attachments/" + idLetter);
 
   // Test it out:
 }

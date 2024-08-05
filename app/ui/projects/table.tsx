@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import { UpdateInvoice, DeleteInvoice } from "@/app/ui/invoices/buttons";
@@ -7,6 +7,8 @@ import { formatDateToLocal, formatCurrency } from "@/app/lib/utils";
 import { fetchFilteredInvoices } from "@/app/lib/data";
 import TableModel from "@/app/components/commons/TableModel";
 import { fetchProjectsPages } from "@/app/actions/projects";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/theme/store";
 
 export default async function InvoicesTable({
   query,
@@ -21,6 +23,7 @@ export default async function InvoicesTable({
   };
 }) {
   // const projects = await fetchProjectsPages(query, currentPage);
+  const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
 
   const columns = [
     {
@@ -36,7 +39,11 @@ export default async function InvoicesTable({
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
+        <div
+          className={`rounded-lg ${
+            isDarkMode ? "#1F2937" : "bg-gray-50 "
+          } p-2 md:pt-0`}
+        >
           <div className="md:hidden">
             {/* {invoices?.map((invoice) => (
               <div
@@ -74,7 +81,7 @@ export default async function InvoicesTable({
               </div>
             ))} */}
           </div>
-          <TableModel elements={elements?.list as any[]} columns={columns}  />
+          <TableModel elements={elements?.list as any[]} columns={columns} />
         </div>
       </div>
     </div>

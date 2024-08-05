@@ -5,6 +5,8 @@ import { Create, Update, Delete } from "./ButtonsActions";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/theme/store";
 
 // import { useRouter } from "next/router";
 
@@ -21,14 +23,20 @@ export default function TableModel({
   notUpdate,
   notDelete,
   redirect,
+  redirectAttachment,
 }: {
   elements: Element[];
   columns: { name: string; key: string }[];
   notUpdate?: boolean;
   notDelete?: boolean;
   redirect?: boolean;
+  redirectAttachment?: boolean;
 }) {
   const pathname = usePathname();
+  const segments = pathname.split("/");
+  const lastSegment = segments[segments.length - 1];
+  const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
+
   console.log(pathname);
   // const [checked, setChecked] = useState<{ [key: string]: boolean }>({});
   const router = useRouter();
@@ -39,13 +47,29 @@ export default function TableModel({
 
   const handleRedirectCards = (id: string, items: any) => {
     // router.push("/dashboard/delivery/" + id);
+    router.push(`/dashboard/cards/${id}/${lastSegment}`);
+  };
+
+  const handleRedirectAttachment = (id: string, items: any) => {
+    // router.push("/dashboard/delivery/" + id);
+    router.push(`/dashboard/attachments/${id}`);
   };
 
   // const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
 
   return (
-    <table className="hidden min-w-full text-gray-900 md:table">
-      <thead className="rounded-lg text-left text-sm font-normal">
+    <table
+      className="hidden min-w-full text-gray-900 md:table"
+      style={
+        isDarkMode
+          ? { backgroundColor: "#1F2937" }
+          : { backgroundColor: "#F3F4F6" }
+      }
+    >
+      <thead
+        className="rounded-lg text-left text-sm font-normal"
+        style={isDarkMode ? { color: "white" } : { backgroundColor: "#F3F4F6" }}
+      >
         <tr>
           {columns.map((column) => (
             <th
@@ -56,24 +80,6 @@ export default function TableModel({
               {column.name}
             </th>
           ))}
-          {/* <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-            Customer
-          </th>
-          <th scope="col" className="px-3 py-5 font-medium">
-            Email
-          </th>
-          <th scope="col" className="px-3 py-5 font-medium">
-            Amount
-          </th>
-          <th scope="col" className="px-3 py-5 font-medium">
-            Date
-          </th>
-          <th scope="col" className="px-3 py-5 font-medium">
-            Status
-          </th>
-          <th scope="col" className="relative py-3 pl-6 pr-3">
-            <span className="sr-only">Edit</span>
-          </th> */}
         </tr>
       </thead>
       <tbody className="bg-white">
@@ -85,31 +91,10 @@ export default function TableModel({
             {columns.map((column) => (
               <td key={column.key} className="whitespace-nowrap py-3 pl-6 pr-3">
                 <div className="flex items-center gap-3">
-                  {/* <Image
-                    src={items.image_url}
-                    className="rounded-full"
-                    width={28}
-                    height={28}
-                    alt={`${items.name}'s profile picture`}
-                  /> */}
                   <p>{items[column.key]}</p>
                 </div>
               </td>
             ))}
-
-            {/* <td className="whitespace-nowrap py-3 pl-6 pr-3">
-              <div className="flex items-center gap-3">
-                <Image
-                  src={invoice.image_url}
-                  className="rounded-full"
-                  width={28}
-                  height={28}
-                  alt={`${invoice.name}'s profile picture`}
-                />
-                <p>{invoice.name}</p>
-              </div>
-            </td>
-            <td className="whitespace-nowrap px-3 py-3">{invoice.email}</td> */}
 
             <td className="whitespace-nowrap py-3 pl-6 pr-3">
               <div className="flex justify-end gap-3">
@@ -124,6 +109,12 @@ export default function TableModel({
                 {redirect && (
                   <button
                     onClick={() => handleRedirectCards(items.id, items)}
+                    className="bg-green-400-500 text-white border-2 border-black px-4 py-2 rounded hover:bg-green-600"
+                  />
+                )}
+                {redirectAttachment && (
+                  <button
+                    onClick={() => handleRedirectAttachment(items.id, items)}
                     className="bg-green-400-500 text-white border-2 border-black px-4 py-2 rounded hover:bg-green-600"
                   />
                 )}

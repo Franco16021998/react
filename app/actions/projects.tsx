@@ -15,12 +15,9 @@ interface Project {
 const API_URL =
   "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/projects";
 
-export async function fetchProjectsPagesNumberPages(
-  query: string
-): Promise<any> {
+export async function fetchProjectsAll(): Promise<any> {
   try {
     const token = cookies().get("token")?.value;
-    console.log(token);
 
     // if (!token) {
     //   throw new Error("No token found");
@@ -47,8 +44,8 @@ export async function fetchProjectsPagesNumberPages(
           },
         }
       );
-      console.log(response);
-      return response?.data?.length;
+      console.log("response", response);
+      return response.data;
     }
 
     // console.log("aaa");
@@ -74,7 +71,6 @@ export async function fetchProjectsPages(
 ): Promise<any> {
   try {
     const token = cookies().get("token")?.value;
-    console.log("query", query);
 
     // if (!token) {
     //   throw new Error("No token found");
@@ -100,21 +96,13 @@ export async function fetchProjectsPages(
           },
         }
       );
-      console.log("aaaa", response?.data);
 
       return {
         list: response?.data?.projects,
         total: calcularCantidadDeHojas(response?.data?.total, 10),
       };
     }
-
-    // console.log("aaa");
-    // console.log("aaa", response);
-
-    // const projectCount = response.data.length;
-    // return response;
   } catch (error) {
-    // console.log(req);
     console.error("Error fetching projects:", error);
     // throw new Error("Failed to fetch projects.");
   }
@@ -152,12 +140,147 @@ export async function fetchDeliveryPages(
           },
         }
       );
-      console.log("aaaa", response?.data);
+
+      console.log("response", response?.data);
 
       return {
         list: response?.data?.deliverables,
         total: calcularCantidadDeHojas(response?.data?.total, 10),
       };
+    }
+
+    // console.log("aaa");
+    // console.log("aaa", response);
+
+    // const projectCount = response.data.length;
+    // return response;
+  } catch (error) {
+    // console.log(req);
+    console.error("Error fetching projects:", error);
+    // throw new Error("Failed to fetch projects.");
+  }
+}
+
+export async function fetchProjectId(id: string): Promise<any> {
+  try {
+    const token = cookies().get("token")?.value;
+
+    // if (!token) {
+    //   throw new Error("No token found");
+    // }
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      const response = await axios.get(
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/projects/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("response", response?.data);
+
+      return response;
+    }
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    // throw new Error("Failed to fetch projects.");
+  }
+}
+
+export async function fetchCardsPages(
+  deliveryId: string,
+  projectId: string
+): Promise<any> {
+  try {
+    const token = cookies().get("token")?.value;
+
+    // if (!token) {
+    //   throw new Error("No token found");
+    // }
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      const response = await axios.get(
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters?entregable_id=${deliveryId}&proyecto_id=${projectId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("response", response?.data);
+
+      return { list: response?.data };
+    }
+
+    // console.log("aaa");
+    // console.log("aaa", response);
+
+    // const projectCount = response.data.length;
+    // return response;
+  } catch (error) {
+    // console.log(req);
+    console.error("Error fetching projects:", error);
+    // throw new Error("Failed to fetch projects.");
+  }
+}
+
+export async function fetchAttachmentsPages(id: string): Promise<any> {
+  try {
+    const token = cookies().get("token")?.value;
+
+    // if (!token) {
+    //   throw new Error("No token found");
+    // }
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      const response = await axios.get(
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters?entregable_id=${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("response", response?.data);
+
+      return { list: response?.data };
     }
 
     // console.log("aaa");

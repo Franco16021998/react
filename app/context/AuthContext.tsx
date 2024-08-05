@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
+import { cookies } from "next/headers";
 
 interface User {
   userName: string;
@@ -36,7 +37,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const token = localStorage.getItem("token");
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1];
+
       if (token) {
         const isValid = await validateToken();
         if (isValid) {
@@ -75,7 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       document.cookie = `token=${data.token}; path=/; secure; samesite=lax`;
       document.cookie = `refreshToken=${data.refreshToken}; path=/; secure; samesite=lax`;
 
-      router.push("/dashboard");
+      router.push("/dashboard/projects");
     } catch (error) {
       console.error("Error during login", error);
       if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -87,7 +92,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const validateToken = async (): Promise<boolean> => {
-    const token = localStorage.getItem("token");
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
     if (!token) return false;
 
     try {
@@ -107,7 +115,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
   const refreshToken = async (): Promise<void> => {
-    const refreshToken = localStorage.getItem("refreshToken");
+    const refreshToken = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("refreshToken="))
+      ?.split("=")[1];
 
     try {
       const { data } = await axios.post(

@@ -2,12 +2,15 @@
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import { useDebouncedCallback } from "use-debounce";
+import { RootState } from "../theme/store";
 
 export default function Search({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+  const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
 
   const handleSearch = useDebouncedCallback((term) => {
     const params = new URLSearchParams(searchParams);
@@ -29,6 +32,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
       <input
         className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
         placeholder={placeholder}
+        style={isDarkMode ? { backgroundColor: "white", color: "black" } : {}}
         onChange={(e) => {
           handleSearch(e.target.value);
         }}

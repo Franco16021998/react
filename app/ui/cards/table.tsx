@@ -23,17 +23,16 @@ export default async function Table({
   };
 }) {
   // const projects = await fetchProjectsPages(query, currentPage);
-
   const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
 
   const columns = [
     {
-      name: "Descripcion",
-      key: "description",
+      name: "Referencia",
+      key: "referencia",
     },
     {
-      name: "Responsable",
-      key: "responsable",
+      name: "Fecha Hora",
+      key: "fecha_subida_pdf",
     },
   ];
 
@@ -51,7 +50,7 @@ export default async function Table({
             columns={columns}
             notUpdate
             notDelete
-            redirect
+            redirectAttachment
           />
         </div>
       </div>
