@@ -56,7 +56,7 @@ export default function NavLinks() {
                 "bg-sky-100 text-blue-600": pathname === link.href,
                 "bg-gray-50": !isDarkMode,
                 "bg-black": isDarkMode,
-                "text-white": isDarkMode,
+                "text-black": isDarkMode,
               }
             )}
           >

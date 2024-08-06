@@ -223,7 +223,11 @@ export async function createAttachment(
           },
         }
       );
-      console.log('asdasdasdas',response);
+      console.log("asdasdasdas", {
+        fileContent: fileContent,
+        fileName: fileName,
+        comentarios: comentarios,
+      });
 
       revalidatePath("/dashboard/attachments/" + idLetter);
       redirect("/dashboard/attachments/" + idLetter);
