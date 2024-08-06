@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/theme/store";
+import PdfModal from "@/app/dashboard/attachments/ShowPdf";
 
 // import { useRouter } from "next/router";
 
@@ -24,6 +25,8 @@ export default function TableModel({
   notDelete,
   redirect,
   redirectAttachment,
+  actionPdf,
+  base64,
 }: {
   elements: Element[];
   columns: { name: string; key: string }[];
@@ -31,6 +34,8 @@ export default function TableModel({
   notDelete?: boolean;
   redirect?: boolean;
   redirectAttachment?: boolean;
+  actionPdf?: boolean;
+  base64?: { downloadUrl: string; fileName: string };
 }) {
   const pathname = usePathname();
   const segments = pathname.split("/");
@@ -98,6 +103,8 @@ export default function TableModel({
 
             <td className="whitespace-nowrap py-3 pl-6 pr-3">
               <div className="flex justify-end gap-3">
+                {actionPdf && <PdfModal pdfUrl={base64?.downloadUrl} />}
+
                 {pathname === "/dashboard/projects" && (
                   <button
                     onClick={() => handleCheckboxChange(items.id, items)}
