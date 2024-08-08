@@ -13,11 +13,14 @@ import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 
+
+
 export default function LoginForm() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+  const [pending, setPending] = useState(false);
 
   const router = useRouter();
   const { loginForm } = useAuth() || {};
@@ -39,24 +42,33 @@ export default function LoginForm() {
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log(e);
     e.preventDefault();
-    if (loginForm) {
-      const a = await loginForm(formData.username, formData.password);
-      console.log(a);
-    }
+    setPending(true); // Inicia el estado de carga
 
-    // try {
-    //   const response = await axios.post(
-    //     "https://api.anaprevention.com/v1/authentication/authenticate",
-    //     formData
-    //   );
-    //   console.log(response);
-    //   document.cookie = `token=${response.data.result.token}; path=/`;
-    //   router.push("/dashboard");
-    // } catch (error) {
-    //   console.error("Login failed:", error);
-    // }
+    try {
+      if (loginForm) {
+        const a = await loginForm(formData.username, formData.password);
+      }
+
+      // try {
+      //   const response = await axios.post(
+      //     "https://api.anaprevention.com/v1/authentication/authenticate",
+      //     formData
+      //   );
+      //   console.log(response);
+      //   document.cookie = `token=${response.data.result.token}; path=/`;
+      //   router.push("/dashboard");
+      // } catch (error) {
+      //   console.error("Login failed:", error);
+      // }
+    } catch (error) {
+      console.error("Login failed:", error);
+      setPending(false); 
+    } finally {
+      setTimeout(() => {        
+      setPending(false); 
+      }, 2000);
+    }
   };
 
   return (
@@ -80,6 +92,7 @@ export default function LoginForm() {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
+                disabled={pending} 
                 required
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -103,13 +116,22 @@ export default function LoginForm() {
                 minLength={6}
                 value={formData.password}
                 onChange={handleChange}
+                disabled={pending} 
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
           </div>
         </div>
-        <Button className="mt-4 w-full">
-          Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        <Button className="mt-4 w-full disabled:opacity-50" disabled={pending}>
+        {pending ? (
+            <>
+            Cargando...  
+            </>
+          ) : (
+            <>
+              Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+            </>
+          )}
         </Button>
         <div className="flex h-8 items-end space-x-1">
           {/* Add form errors here */}
