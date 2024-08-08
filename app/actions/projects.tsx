@@ -75,6 +75,7 @@ export async function fetchProjectsPages(
     // if (!token) {
     //   throw new Error("No token found");
     // }
+    console.log("token", "asdasdasdas");
 
     const { data } = await axios.post(
       "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",

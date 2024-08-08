@@ -12,6 +12,7 @@ import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import Modal from "../Modal";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/outline";
 import { redirect } from "next/navigation";
+import ReturnIcon from "@/app/components/commons/ReturnArrow";
 
 export default async function Page({
   params,
@@ -30,7 +31,7 @@ export default async function Page({
   const attachments = await fetchAttachmentsPages(params.id);
   const base64 = await fetchGetAttachment(params.id);
 
-  console.log("base64", base64);
+  console.log("base64", attachments);
 
   return (
     <div className="w-full">
@@ -41,13 +42,14 @@ export default async function Page({
       <div className="flex w-full items-center justify-center  space-x-4">
         <div>Estado Fecha-hora PDF</div>
         <Modal idLetter={params?.id} />
-        <button
+        {/* <ReturnIcon /> */}
+        {/* <button
         // className="bg-blue-500"
         // onClick={() => redirect("/dashboard/projects")}
         >
           {" "}
           <ArrowLeftCircleIcon className="w-6 h-6 text-blue-600 cursor-pointer" />{" "}
-        </button>
+        </button> */}
       </div>
 
       {/* <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">

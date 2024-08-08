@@ -5,6 +5,7 @@ import { lusitana } from "@/app/ui/fonts";
 import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
 import { fetchCardsPages } from "@/app/actions/projects";
+import { Create } from "@/app/components/commons/ButtonsActions";
 
 export default async function Page({
   params,
@@ -21,14 +22,12 @@ export default async function Page({
 
   // Llamada al servidor para obtener el número total de páginas
   const cards = await fetchCardsPages(params.id, params.lastSegment);
-  console.log("cards", cards);
+  console.log("params", cards);
 
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
-        <h1 className={`${lusitana.className} text-2xl`}>
-          Lista de cartas
-        </h1>
+        <h1 className={`${lusitana.className} text-2xl`}>Lista de cartas</h1>
       </div>
       {/* <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Buscar proyectos..." />
@@ -37,6 +36,12 @@ export default async function Page({
       {/* <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Buscar entregables..." />
       </div> */}
+      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+        <Create
+          label="Crear carta"
+          route={`/dashboard/cards/${params?.id}/${params?.lastSegment}/create`}
+        />
+      </div>
 
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <Table query={query} currentPage={currentPage} elements={cards} />

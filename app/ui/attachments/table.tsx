@@ -30,7 +30,7 @@ export default async function Table({
   const columns = [
     {
       name: "Estado",
-      key: "status",
+      key: "estado",
     },
     {
       name: "Fecha-Hora PDF",

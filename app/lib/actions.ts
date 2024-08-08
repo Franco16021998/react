@@ -37,12 +37,21 @@ const FormSchemaAttachment = z.object({
   fileContent: z.string(),
   fileName: z.string(),
   comentarios: z.string(),
-  idLetter: z.string(),
+  // idLetter: z.string(),
+});
+
+const FormCard = z.object({
+  id: z.string(),
+  reference: z.string(),
+  fechalimite: z.string(),
+  entregable_id: z.string(),
+  proyecto_id: z.string(),
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 const CreateProject = FormSchemaProject.omit({ id: true, date: true });
 const CreateAttachment = FormSchemaAttachment.omit({ id: true });
+const CreateCard = FormCard.omit({ id: true });
 
 export type State = {
   errors?: {
@@ -66,6 +75,14 @@ export type StateAttachment = {
     fileContent?: string[];
     fileName?: string[];
     comentarios?: string[];
+  };
+  message?: string | null;
+};
+
+export type StateCard = {
+  errors?: {
+    reference?: string[];
+    fechalimite?: string[];
   };
   message?: string | null;
 };
@@ -183,10 +200,8 @@ export async function createAttachment(
     fileContent: formData.get("fileContent"),
     fileName: formData.get("fileName"),
     comentarios: formData.get("comentarios"),
-    idLetter: formData.get("idLetter"),
+    // idLetter: formData.get("idLetter"),
   });
-
-  console.log("aaa", formData);
 
   if (!validatedFields.success) {
     return {
@@ -194,7 +209,7 @@ export async function createAttachment(
       message: "Missing Fields. Failed to Create Invoice.",
     };
   }
-  const { fileContent, fileName, comentarios, idLetter } = validatedFields.data;
+  const { fileContent, fileName, comentarios } = validatedFields.data;
 
   try {
     const token = cookies().get("token")?.value;
@@ -211,7 +226,9 @@ export async function createAttachment(
 
     if (data === "Token is valid") {
       const response = await axios.patch(
-        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters/${idLetter}?action=upload`,
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters/${formData.get(
+          "idLetter"
+        )}?action=upload`,
         {
           fileContent: fileContent,
           fileName: fileName,
@@ -223,14 +240,6 @@ export async function createAttachment(
           },
         }
       );
-      console.log("asdasdasdas", {
-        fileContent: fileContent,
-        fileName: fileName,
-        comentarios: comentarios,
-      });
-
-      revalidatePath("/dashboard/attachments/" + idLetter);
-      redirect("/dashboard/attachments/" + idLetter);
     }
   } catch (error) {
     // console.log(req);
@@ -238,8 +247,84 @@ export async function createAttachment(
     // throw new Error("Failed to fetch projects.");
   }
 
-  revalidatePath("/dashboard/attachments/" + idLetter);
-  redirect("/dashboard/attachments/" + idLetter);
+  revalidatePath("/dashboard/attachments/" + formData.get("idLetter"));
+  redirect("/dashboard/attachments/" + formData.get("idLetter"));
+
+  // Test it out:
+}
+
+export async function createCard(prevState: StateCard, formData: FormData) {
+  const validatedFields = CreateCard.safeParse({
+    reference: formData.get("reference"),
+    fechalimite: formData.get("fechalimite"),
+    entregable_id: formData.get("entregable_id"),
+    proyecto_id: formData.get("proyecto_id"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Create Invoice.",
+    };
+  }
+  const { reference, fechalimite, entregable_id, proyecto_id } =
+    validatedFields.data;
+
+  console.log("asdasdasdas", {
+    reference: reference,
+    fechalimite: fechalimite,
+    entregable_id: entregable_id,
+    proyecto_id: proyecto_id,
+  });
+
+  try {
+    const token = cookies().get("token")?.value;
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      const response = await axios.post(
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters`,
+        {
+          referencia: reference,
+          fechalimite: fechalimite,
+          entregable_id: entregable_id,
+          proyecto_id: proyecto_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log({
+        reference: reference,
+        fechalimite: fechalimite,
+        entregable_id: entregable_id,
+        proyecto_id: proyecto_id,
+      });
+      console.log("asdasdasdas", response);
+
+      // revalidatePath("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
+      // redirect("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
+    }
+  } catch (error) {
+    // console.log(req);
+    console.error("Error fetching projects:", error);
+    // throw new Error("Failed to fetch projects.");
+  }
+
+  revalidatePath("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
+  redirect("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
 
   // Test it out:
 }

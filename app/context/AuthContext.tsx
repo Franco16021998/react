@@ -44,18 +44,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (token) {
         const isValid = await validateToken();
+        console.log(isValid);
         if (isValid) {
           const decoded: User = jwtDecode(token);
           setUser(decoded);
         } else {
-          await refreshToken();
+          logout();
+          // await refreshToken();
         }
       }
       setLoading(false);
     };
 
     initializeAuth();
-  }, []);
+  }, [router]);
 
   const loginForm = async (username: string, password: string) => {
     try {
@@ -92,6 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const validateToken = async (): Promise<boolean> => {
+    console.log("asdads");
     const token = document.cookie
       .split("; ")
       .find((row) => row.startsWith("token="))
