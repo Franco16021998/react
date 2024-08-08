@@ -306,13 +306,6 @@ export async function createCard(prevState: StateCard, formData: FormData) {
           },
         }
       );
-      console.log({
-        reference: reference,
-        fechalimite: fechalimite,
-        entregable_id: entregable_id,
-        proyecto_id: proyecto_id,
-      });
-      console.log("asdasdasdas", response);
 
       // revalidatePath("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
       // redirect("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
