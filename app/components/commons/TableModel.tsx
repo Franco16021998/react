@@ -13,6 +13,8 @@ import {
   ArrowPathIcon,
   EnvelopeIcon,
 } from "@heroicons/react/20/solid";
+import Link from "next/link";
+import { PencilIcon } from "@heroicons/react/24/outline";
 
 // import { useRouter } from "next/router";
 
@@ -32,6 +34,9 @@ export default function TableModel({
   redirectAttachment,
   actionPdf,
   base64,
+  editCardRoute,
+  id,
+  lastSegmentUrl,
 }: {
   elements: Element[];
   columns: { name: string; key: string }[];
@@ -41,6 +46,9 @@ export default function TableModel({
   redirectAttachment?: boolean;
   actionPdf?: boolean;
   base64?: { downloadUrl: string; fileName: string };
+  editCardRoute?: boolean;
+  id?: string;
+  lastSegmentUrl?: string;
 }) {
   const pathname = usePathname();
   const segments = pathname.split("/");
@@ -142,6 +150,15 @@ export default function TableModel({
                   )}
                   {!notUpdate && <Update id={items.id} route={"projects"} />}
                   {!notDelete && <Delete id={items.id} />}
+                  {editCardRoute && (
+                    <Link
+                      href={`/dashboard/cards/${id}/${lastSegmentUrl}/${items.id}/edit`}
+                      className="rounded-md border p-2 hover:bg-gray-100"
+                    >
+                      <PencilIcon className="w-5" />
+                    </Link>
+                  )}
+
                   {redirect && (
                     <button
                       onClick={() => handleRedirectCards(items.id, items)}

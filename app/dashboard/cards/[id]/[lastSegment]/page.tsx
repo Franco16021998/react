@@ -22,7 +22,7 @@ export default async function Page({
 
   // Llamada al servidor para obtener el número total de páginas
   const cards = await fetchCardsPages(params.id, params.lastSegment);
-  console.log("params", cards);
+  console.log("params", params);
 
   return (
     <div className="w-full">
@@ -44,7 +44,13 @@ export default async function Page({
       </div>
 
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} elements={cards} />
+        <Table
+          query={query}
+          currentPage={currentPage}
+          elements={cards}
+          id={params.id}
+          lastSegment={params.lastSegment}
+        />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         {/* <Pagination totalPages={totalPages?.total} /> */}

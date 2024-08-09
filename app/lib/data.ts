@@ -8,6 +8,8 @@ import {
   Revenue,
 } from "./definitions";
 import { formatCurrency } from "./utils";
+import { cookies } from "next/headers";
+import axios from "axios";
 
 export async function fetchRevenue() {
   try {
@@ -217,5 +219,77 @@ export async function fetchFilteredCustomers(query: string) {
   } catch (err) {
     console.error("Database Error:", err);
     throw new Error("Failed to fetch customer table.");
+  }
+}
+
+export async function fetchProjectById(id: string) {
+  try {
+    const token = cookies().get("token")?.value;
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      const response = await axios.get(
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/projects/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return response.data;
+
+      console.log("aaa", response);
+
+      // revalidatePath("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
+      // redirect("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
+    }
+  } catch (err) {
+    console.error("Database Error:", err);
+    throw new Error("Failed to fetch customer table.");
+  }
+}
+
+export async function fetchCardById(id: string) {
+  try {
+    const token = cookies().get("token")?.value;
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      const response = await axios.get(
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return response.data;
+
+      // revalidatePath("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
+      // redirect("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
+    }
+  } catch (err) {
+    console.error("Database Error:", err);
+    // throw new Error("Failed to fetch customer table.");
   }
 }

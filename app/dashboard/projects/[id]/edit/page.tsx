@@ -1,17 +1,16 @@
-import Form from "@/app/ui/invoices/edit-form";
+import EditProjectForm from "@/app/ui/projects/edit-form"; 
 import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
-import { fetchInvoiceById, fetchCustomers } from "@/app/lib/data";
+import { fetchProjectById } from "@/app/lib/data";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
-//   const [invoice, customers] = await Promise.all([
-//     fetchInvoiceById(id),
-//     fetchCustomers(),
-//   ]);
-//   if (!invoice) {
-//     notFound();
-//   }
+  const [project] = await Promise.all([fetchProjectById(id)]);
+  console.log("project12", project);
+
+  //   if (!invoice) {
+  //     notFound();
+  //   }
 
   return (
     <main>
@@ -25,7 +24,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           },
         ]}
       />
-      {/* <Form invoice={invoice} customers={customers} /> */}
+      <EditProjectForm project={project} />
     </main>
   );
 }

@@ -137,15 +137,9 @@ export async function createProject(
     };
   }
   const { code, description } = validatedFields.data;
-  // const amountInCents = amount * 100;
-  // const date = new Date().toISOString().split("T")[0];
 
   try {
     const token = cookies().get("token")?.value;
-
-    // if (!token) {
-    //   throw new Error("No token found");
-    // }
 
     const { data } = await axios.post(
       "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
@@ -174,22 +168,70 @@ export async function createProject(
       revalidatePath("/dashboard/projects");
       redirect("/dashboard/projects");
     }
-
-    // console.log("aaa");
-    // console.log("aaa", response);
-
-    // const projectCount = response.data.length;
-    // return response;
   } catch (error) {
-    // console.log(req);
     console.error("Error fetching projects:", error);
-    // throw new Error("Failed to fetch projects.");
   }
 
   revalidatePath("/dashboard/projects");
   redirect("/dashboard/projects");
+}
 
-  // Test it out:
+const UpdateProject = FormSchemaProject.omit({ id: true, date: true });
+
+export async function editProject(
+  id: string,
+  prevState: StateProjects,
+  formData: FormData
+) {
+  const validatedFields = UpdateProject.safeParse({
+    code: formData.get("code"),
+    description: formData.get("description"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Create Invoice.",
+    };
+  }
+  const { code, description } = validatedFields.data;
+
+  try {
+    const token = cookies().get("token")?.value;
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      await axios.put(
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/projects/${id}`,
+        {
+          code: code,
+          description: description,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      revalidatePath("/dashboard/projects");
+      redirect("/dashboard/projects");
+    }
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+  }
+
+  revalidatePath("/dashboard/projects");
+  redirect("/dashboard/projects");
 }
 
 export async function createAttachment(
@@ -253,6 +295,74 @@ export async function createAttachment(
   // Test it out:
 }
 
+const FormCardEdit = z.object({
+  id: z.string(),
+  reference: z.string(),
+  fechalimite: z.string(),
+});
+
+const UpdateCard = FormCardEdit.omit({ id: true });
+
+export async function editCard(
+  idCard: string,
+  idProject: string,
+  idEntregable: string,
+  prevState: StateCard,
+  formData: FormData
+) {
+  console.log("idCard", idCard);
+  console.log("idProject", idProject);
+  console.log("idEntregable", idEntregable);
+  console.log("formData", formData);
+
+  const validatedFields = UpdateCard.safeParse({
+    reference: formData.get("reference"),
+    fechalimite: formData.get("fechalimite"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Edit Invoice.",
+    };
+  }
+  const { reference, fechalimite } = validatedFields.data;
+
+  try {
+    const token = cookies().get("token")?.value;
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      await axios.put(
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters/${idCard}`,
+        {
+          referencia: reference,
+          fechalimite: fechalimite,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    }
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+  }
+
+  revalidatePath("/dashboard/cards/" + idEntregable + "/" + idProject);
+  redirect("/dashboard/cards/" + idEntregable + "/" + idProject);
+}
+
 export async function createCard(prevState: StateCard, formData: FormData) {
   const validatedFields = CreateCard.safeParse({
     reference: formData.get("reference"),
@@ -306,20 +416,13 @@ export async function createCard(prevState: StateCard, formData: FormData) {
           },
         }
       );
-
-      // revalidatePath("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
-      // redirect("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
     }
   } catch (error) {
-    // console.log(req);
     console.error("Error fetching projects:", error);
-    // throw new Error("Failed to fetch projects.");
   }
 
   revalidatePath("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
   redirect("/dashboard/cards/" + entregable_id + "/" + proyecto_id);
-
-  // Test it out:
 }
 
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });

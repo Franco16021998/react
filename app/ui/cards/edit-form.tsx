@@ -1,44 +1,43 @@
 "use client";
 
-import { CustomerField } from "@/app/lib/definitions";
+import { Card, CustomerField, InvoiceForm } from "@/app/lib/definitions";
+import {
+  CheckIcon,
+  ClockIcon,
+  CurrencyDollarIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Button } from "@/app/ui/button";
-import { createCard, StateCard } from "@/app/lib/actions";
-import { useActionState, useState } from "react";
+import { editCard, State, StateCard } from "@/app/lib/actions";
+import { useActionState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/theme/store";
-import { usePathname } from "next/navigation";
 
-export default function Form({
-  entregableId,
-  projectId,
+export default function EditCardForm({
+  card,
+  idProject,
+  idEntregable,
 }: {
-  entregableId: string;
-  projectId: string;
+  card: Card;
+  idProject: string;
+  idEntregable: string;
 }) {
   const initialState: StateCard = { message: null, errors: {} };
-
-  const [state, formAction] = useActionState(createCard, initialState);
+  const updateInvoiceWithId = editCard.bind(
+    null,
+    card.id,
+    idProject,
+    idEntregable
+  );
+  const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
   const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
-  const router = usePathname();
-  const [reference, setReference] = useState<string>("");
-  const [fechalimite, setFechalimite] = useState<string>("");
-  const params = router.split("/");
+  const defaultDate = card.fechalimite.split("T")[0];
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append("reference", reference);
-    formData.append("fechalimite", fechalimite);
-    formData.append("entregable_id", params?.[3]);
-    formData.append("proyecto_id", params?.[4]);
-
-    // Llama a formAction con los datos necesarios
-    formAction(formData);
-  };
+  console.log("card", card);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form action={formAction}>
       <div
         className="rounded-md bg-gray-50 p-4 md:p-6"
         style={isDarkMode ? { color: "black" } : { color: "#F3F4F6" }}
@@ -51,11 +50,10 @@ export default function Form({
             <div className="relative">
               <input
                 id="reference"
-                name="referencia"
-                value={reference}
+                name="reference"
                 className="peer block w-full rounded-md border border-gray-200 py-2  text-sm outline-2 placeholder:text-gray-500"
                 required
-                onChange={(e) => setReference(e.target.value)}
+                defaultValue={card.referencia}
               />
             </div>
           </div>
@@ -70,10 +68,9 @@ export default function Form({
                 id="date"
                 name="fechalimite"
                 type="date"
-                value={fechalimite}
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                 required
-                onChange={(e) => setFechalimite(e.target.value)}
+                defaultValue={defaultDate}
               />
             </div>
           </div>
@@ -81,12 +78,12 @@ export default function Form({
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
-          href={`/dashboard/cards/${entregableId}/${projectId}`}
+          href="/dashboard/invoices"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Cancel
         </Link>
-        <Button type="submit">Crear Carta</Button>
+        <Button type="submit">Editar Carta</Button>
       </div>
     </form>
   );

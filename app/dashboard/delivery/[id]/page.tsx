@@ -29,7 +29,6 @@ export default async function Page({
   const totalPages = await fetchDeliveryPages(query, currentPage);
   const idProject = await fetchProjectId(params.id);
   const projects = await fetchProjectsAll();
-  console.log("idProject", projects);
 
   return (
     <div className="w-full">

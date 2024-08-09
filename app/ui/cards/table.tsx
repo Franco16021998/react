@@ -14,6 +14,8 @@ export default async function Table({
   query,
   currentPage,
   elements,
+  id,
+  lastSegment,
 }: {
   query: string;
   currentPage: number;
@@ -21,6 +23,8 @@ export default async function Table({
     list: any[];
     total: number;
   };
+  id: string;
+  lastSegment: string;
 }) {
   // const projects = await fetchProjectsPages(query, currentPage);
   const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
@@ -49,8 +53,11 @@ export default async function Table({
             elements={elements?.list as any[]}
             columns={columns}
             notUpdate
+            editCardRoute
             notDelete
             redirectAttachment
+            id={id}
+            lastSegmentUrl={lastSegment}
           />
         </div>
       </div>

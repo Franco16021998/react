@@ -11,14 +11,20 @@ import {
 import { Button } from "@/app/ui/button";
 import { createProject, StateProjects } from "@/app/lib/actions";
 import { useActionState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/theme/store";
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
   const initialState: StateProjects = { message: null, errors: {} };
+  const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
 
   const [state, formAction] = useActionState(createProject, initialState);
 
   return (
-    <form action={formAction}>
+    <form
+      action={formAction}
+      style={isDarkMode ? { color: "black" } : { color: "#F3F4F6" }}
+    >
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Invoice Amount */}
         <div className="mb-4">
