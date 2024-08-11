@@ -36,11 +36,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // Estado para el mensaje de error
 
   useEffect(() => {
+    console.log("aa");
     const initializeAuth = async () => {
       const token = document.cookie
         .split("; ")
         .find((row) => row.startsWith("token="))
         ?.split("=")[1];
+      console.log(token);
 
       if (token) {
         const isValid = await validateToken();
@@ -52,12 +54,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           logout();
           // await refreshToken();
         }
+      } else {
+        logout();
       }
       setLoading(false);
     };
 
     initializeAuth();
-  }, [router]);
+  }, []);
 
   const loginForm = async (username: string, password: string) => {
     try {

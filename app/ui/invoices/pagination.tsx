@@ -5,17 +5,37 @@ import clsx from "clsx";
 import Link from "next/link";
 import { generatePagination } from "@/app/lib/utils";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default function Pagination({ totalPages }: { totalPages: number }) {
+export default function Pagination({
+  totalPages,
+  currentPageChange,
+}: {
+  totalPages: number;
+  currentPageChange?: any;
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
+  const [loading, setLoading] = useState(false);
+  console.log("totalPages", totalPages);
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", pageNumber?.toString());
     return `${pathname}?${params.toString()}`;
   };
+
+  useEffect(() => {
+    console.log("totalPages", "aa");
+
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [currentPageChange]);
 
   // NOTE: Uncomment this code in Chapter 11
 
@@ -29,7 +49,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
         <PaginationArrow
           direction="left"
           href={createPageURL(currentPage - 1)}
-          isDisabled={currentPage <= 1}
+          isDisabled={currentPage <= 1 || loading}
         />
 
         <div className="flex -space-x-px">
@@ -59,6 +79,8 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
           isDisabled={currentPage >= totalPages}
         />
       </div>
+
+      {/* {loading && <div className="loader">Cargando...</div>} */}
     </>
   );
 }

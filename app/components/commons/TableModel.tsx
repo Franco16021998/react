@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Create, Update, Delete } from "./ButtonsActions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
@@ -55,8 +55,16 @@ export default function TableModel({
   const lastSegment = segments[segments.length - 1];
   const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
   const [pending, setPending] = useState(false);
+  const [loading, setLoading] = useState(true);
+  console.log("elements", loading);
 
-  console.log(pathname);
+  useEffect(() => {
+    setLoading(false);
+    const timer = setTimeout(() => {
+      setLoading(true);
+    }, 1000);
+  }, [elements]);
+
   // const [checked, setChecked] = useState<{ [key: string]: boolean }>({});
   const router = useRouter();
 
@@ -110,94 +118,106 @@ export default function TableModel({
             ))}
           </tr>
         </thead>
-        <tbody className="bg-white">
-          {elements?.map((items) => (
-            <tr
-              key={items.id}
-              className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
-            >
-              {columns.map((column) => (
-                <td
-                  key={column.key}
-                  className="whitespace-nowrap py-3 pl-6 pr-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <p>{items[column.key]}</p>
+        {loading && (
+          <tbody className="bg-white">
+            {elements?.map((items) => (
+              <tr
+                key={items.id}
+                className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
+              >
+                {columns.map((column) => (
+                  <td
+                    key={column.key}
+                    className="whitespace-nowrap py-3 pl-6 pr-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <p>{items[column.key]}</p>
+                    </div>
+                  </td>
+                ))}
+
+                <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                  <div className="flex justify-end gap-3">
+                    {actionPdf && <PdfModal pdfUrl={base64?.downloadUrl} />}
+
+                    {pathname === "/dashboard/projects" && (
+                      <button
+                        onClick={() => handleCheckboxChange(items.id, items)}
+                        className="bg-orange-500 rounded-md border p-2 hover:bg-orange-600 disabled:opacity-50"
+                        disabled={pending}
+                      >
+                        {pending ? (
+                          <>
+                            <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
+                          </>
+                        ) : (
+                          <>
+                            <CheckIcon className="w-5 text-white" />
+                          </>
+                        )}
+                      </button>
+                    )}
+                    {!notUpdate && <Update id={items.id} route={"projects"} />}
+                    {!notDelete && <Delete id={items.id} />}
+                    {editCardRoute && (
+                      <Link
+                        href={`/dashboard/cards/${id}/${lastSegmentUrl}/${items.id}/edit`}
+                        className="rounded-md border p-2 hover:bg-gray-100"
+                      >
+                        <PencilIcon className="w-5" />
+                      </Link>
+                    )}
+
+                    {redirect && (
+                      <button
+                        onClick={() => handleRedirectCards(items.id, items)}
+                        className="bg-green-500 rounded-md border p-2 hover:bg-green-600 disabled:opacity-50"
+                        disabled={pending}
+                      >
+                        {pending ? (
+                          <>
+                            <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
+                          </>
+                        ) : (
+                          <>
+                            <EnvelopeIcon className="w-5 text-white" />
+                          </>
+                        )}
+                      </button>
+                    )}
+                    {redirectAttachment && (
+                      <button
+                        onClick={() =>
+                          handleRedirectAttachment(items.id, items)
+                        }
+                        className="bg-green-500 rounded-md border p-2  hover:bg-green-600 disabled:opacity-50"
+                        disabled={pending}
+                      >
+                        {pending ? (
+                          <>
+                            <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
+                          </>
+                        ) : (
+                          <>
+                            <EnvelopeIcon className="w-5 text-white" />
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </td>
-              ))}
-
-              <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                <div className="flex justify-end gap-3">
-                  {actionPdf && <PdfModal pdfUrl={base64?.downloadUrl} />}
-
-                  {pathname === "/dashboard/projects" && (
-                    <button
-                      onClick={() => handleCheckboxChange(items.id, items)}
-                      className="bg-orange-500 rounded-md border p-2 hover:bg-orange-600 disabled:opacity-50"
-                      disabled={pending}
-                    >
-                      {pending ? (
-                        <>
-                          <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
-                        </>
-                      ) : (
-                        <>
-                          <CheckIcon className="w-5 text-white" />
-                        </>
-                      )}
-                    </button>
-                  )}
-                  {!notUpdate && <Update id={items.id} route={"projects"} />}
-                  {!notDelete && <Delete id={items.id} />}
-                  {editCardRoute && (
-                    <Link
-                      href={`/dashboard/cards/${id}/${lastSegmentUrl}/${items.id}/edit`}
-                      className="rounded-md border p-2 hover:bg-gray-100"
-                    >
-                      <PencilIcon className="w-5" />
-                    </Link>
-                  )}
-
-                  {redirect && (
-                    <button
-                      onClick={() => handleRedirectCards(items.id, items)}
-                      className="bg-green-500 rounded-md border p-2 hover:bg-green-600 disabled:opacity-50"
-                      disabled={pending}
-                    >
-                      {pending ? (
-                        <>
-                          <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
-                        </>
-                      ) : (
-                        <>
-                          <EnvelopeIcon className="w-5 text-white" />
-                        </>
-                      )}
-                    </button>
-                  )}
-                  {redirectAttachment && (
-                    <button
-                      onClick={() => handleRedirectAttachment(items.id, items)}
-                      className="bg-green-500 rounded-md border p-2  hover:bg-green-600 disabled:opacity-50"
-                      disabled={pending}
-                    >
-                      {pending ? (
-                        <>
-                          <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
-                        </>
-                      ) : (
-                        <>
-                          <EnvelopeIcon className="w-5 text-white" />
-                        </>
-                      )}
-                    </button>
-                  )}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+              </tr>
+            ))}
+          </tbody>
+        )}
+        {!loading && (
+          <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center text-white w-64">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+              <span className="ml-2">Cargando...</span>
+            </div>
+          </div>
+        )}
       </table>
     );
   }

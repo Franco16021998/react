@@ -51,7 +51,10 @@ export default async function Page({
         <Table query={query} currentPage={currentPage} elements={totalPages} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
-        <Pagination totalPages={totalPages?.total} />
+        <Pagination
+          totalPages={totalPages?.total}
+          currentPageChange={currentPage}
+        />
       </div>
     </div>
   );
