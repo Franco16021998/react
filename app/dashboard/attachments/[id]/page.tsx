@@ -35,34 +35,41 @@ export default async function Page({
 
   return (
     <div className="w-full">
-      <div className="flex w-full items-center justify-between">
+      <div
+        className="flex w-full items-center justify-between"
+        style={{
+          backgroundColor: "#171717",
+          padding: "1rem",
+          borderRadius: "1rem",
+        }}
+      >
         <h1 className={`${lusitana.className} text-2xl`}>Lista de adjuntos</h1>
       </div>
 
-      <div className="flex w-full items-center justify-center  space-x-4">
+      <div
+        className="grid grid-cols-1 gap-4 mt-4"
+        style={{
+          backgroundColor: "#171717",
+          padding: "1rem",
+          borderRadius: "1rem",
+        }}
+      >
+        {" "}
         <div>Estado Fecha-hora PDF</div>
         <Modal idLetter={params?.id} />
-        {/* <ReturnIcon /> */}
-        {/* <button
-        // className="bg-blue-500"
-        // onClick={() => redirect("/dashboard/projects")}
+        <Suspense
+          key={query + currentPage}
+          fallback={<InvoicesTableSkeleton />}
         >
-          {" "}
-          <ArrowLeftCircleIcon className="w-6 h-6 text-blue-600 cursor-pointer" />{" "}
-        </button> */}
+          <Table
+            query={query}
+            currentPage={currentPage}
+            elements={attachments}
+            base64={base64}
+          />
+        </Suspense>
       </div>
 
-      {/* <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="Buscar proyectos..." />
-      </div> */}
-
-      {/* <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="Buscar entregables..." />
-      </div> */}
-
-      <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} elements={attachments} base64={base64} />
-      </Suspense>
       <div className="mt-5 flex w-full justify-center">
         {/* <Pagination totalPages={totalPages?.total} /> */}
       </div>

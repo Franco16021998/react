@@ -92,133 +92,225 @@ export default function TableModel({
     return <h1>No hay registros</h1>;
   } else {
     return (
-      <table
-        className="hidden min-w-full text-gray-900 md:table"
-        style={
-          isDarkMode
-            ? { backgroundColor: "#1F2937" }
-            : { backgroundColor: "#F3F4F6" }
-        }
-      >
-        <thead
-          className="rounded-lg text-left text-sm font-normal"
-          style={
-            isDarkMode ? { color: "white" } : { backgroundColor: "#F3F4F6" }
-          }
-        >
-          <tr>
-            {columns.map((column) => (
-              <th
-                key={column.key}
-                scope="col"
-                className="px-4 py-5 font-medium sm:pl-6"
-              >
-                {column.name}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        {loading && (
-          <tbody className="bg-white">
-            {elements?.map((items) => (
-              <tr
-                key={items.id}
-                className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
-              >
+      <>
+        <div className="md:hidden">
+          {elements?.map((items) => (
+            <div
+              key={items.id}
+              className="mb-2 w-full rounded-md bg-white p-4 text-black"
+            >
+              <div className="flex w-full items-center justify-between pt-4">
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className="whitespace-nowrap py-3 pl-6 pr-3"
+                    // className="whitespace-nowrap py-3 pl-6 pr-3"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 text-xs">
                       <p>{items[column.key]}</p>
                     </div>
                   </td>
                 ))}
+                <div className="flex justify-end ">
+                  {actionPdf && <PdfModal pdfUrl={base64?.downloadUrl} />}
 
-                <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                  <div className="flex justify-end gap-3">
-                    {actionPdf && <PdfModal pdfUrl={base64?.downloadUrl} />}
+                  {pathname === "/dashboard/projects" && (
+                    <button
+                      onClick={() => handleCheckboxChange(items.id, items)}
+                      className="bg-orange-500 rounded-md border p-2 hover:bg-orange-600 disabled:opacity-50"
+                      disabled={pending}
+                    >
+                      {pending ? (
+                        <>
+                          <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
+                        </>
+                      ) : (
+                        <>
+                          <CheckIcon className="w-5 text-white" />
+                        </>
+                      )}
+                    </button>
+                  )}
+                  {!notUpdate && <Update id={items.id} route={"projects"} />}
+                  {!notDelete && <Delete id={items.id} />}
+                  {editCardRoute && (
+                    <Link
+                      href={`/dashboard/cards/${id}/${lastSegmentUrl}/${items.id}/edit`}
+                      className="rounded-md border p-2 hover:bg-gray-100"
+                    >
+                      <PencilIcon className="w-5" />
+                    </Link>
+                  )}
 
-                    {pathname === "/dashboard/projects" && (
-                      <button
-                        onClick={() => handleCheckboxChange(items.id, items)}
-                        className="bg-orange-500 rounded-md border p-2 hover:bg-orange-600 disabled:opacity-50"
-                        disabled={pending}
-                      >
-                        {pending ? (
-                          <>
-                            <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
-                          </>
-                        ) : (
-                          <>
-                            <CheckIcon className="w-5 text-white" />
-                          </>
-                        )}
-                      </button>
-                    )}
-                    {!notUpdate && <Update id={items.id} route={"projects"} />}
-                    {!notDelete && <Delete id={items.id} />}
-                    {editCardRoute && (
-                      <Link
-                        href={`/dashboard/cards/${id}/${lastSegmentUrl}/${items.id}/edit`}
-                        className="rounded-md border p-2 hover:bg-gray-100"
-                      >
-                        <PencilIcon className="w-5" />
-                      </Link>
-                    )}
-
-                    {redirect && (
-                      <button
-                        onClick={() => handleRedirectCards(items.id, items)}
-                        className="bg-green-500 rounded-md border p-2 hover:bg-green-600 disabled:opacity-50"
-                        disabled={pending}
-                      >
-                        {pending ? (
-                          <>
-                            <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
-                          </>
-                        ) : (
-                          <>
-                            <EnvelopeIcon className="w-5 text-white" />
-                          </>
-                        )}
-                      </button>
-                    )}
-                    {redirectAttachment && (
-                      <button
-                        onClick={() =>
-                          handleRedirectAttachment(items.id, items)
-                        }
-                        className="bg-green-500 rounded-md border p-2  hover:bg-green-600 disabled:opacity-50"
-                        disabled={pending}
-                      >
-                        {pending ? (
-                          <>
-                            <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
-                          </>
-                        ) : (
-                          <>
-                            <EnvelopeIcon className="w-5 text-white" />
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        )}
-        {!loading && (
-          <div className="flex justify-center items-center">
-            <div className="flex justify-center items-center text-white w-64">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-              <span className="ml-2">Cargando...</span>
+                  {redirect && (
+                    <button
+                      onClick={() => handleRedirectCards(items.id, items)}
+                      className="bg-green-500 rounded-md border p-2 hover:bg-green-600 disabled:opacity-50"
+                      disabled={pending}
+                    >
+                      {pending ? (
+                        <>
+                          <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
+                        </>
+                      ) : (
+                        <>
+                          <EnvelopeIcon className="w-5 text-white" />
+                        </>
+                      )}
+                    </button>
+                  )}
+                  {redirectAttachment && (
+                    <button
+                      onClick={() => handleRedirectAttachment(items.id, items)}
+                      className="bg-green-500 rounded-md border p-2  hover:bg-green-600 disabled:opacity-50"
+                      disabled={pending}
+                    >
+                      {pending ? (
+                        <>
+                          <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
+                        </>
+                      ) : (
+                        <>
+                          <EnvelopeIcon className="w-5 text-white" />
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        )}
-      </table>
+          ))}
+        </div>
+
+        <table
+          className="hidden min-w-full text-gray-900 md:table"
+          style={
+            isDarkMode
+              ? { backgroundColor: "#141414" }
+              : { backgroundColor: "#F3F4F6" }
+          }
+        >
+          <thead
+            className="rounded-lg text-left text-sm font-normal"
+            style={
+              isDarkMode ? { color: "white" } : { backgroundColor: "#F3F4F6" }
+            }
+          >
+            <tr>
+              {columns.map((column) => (
+                <th
+                  key={column.key}
+                  scope="col"
+                  className="px-4 py-5 font-medium sm:pl-6"
+                >
+                  {column.name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          {loading && (
+            <tbody className="bg-white">
+              {elements?.map((items) => (
+                <tr
+                  key={items.id}
+                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
+                >
+                  {columns.map((column) => (
+                    <td
+                      key={column.key}
+                      className="whitespace-nowrap py-3 pl-6 pr-3"
+                    >
+                      <div className="flex items-center gap-3">
+                        <p>{items[column.key]}</p>
+                      </div>
+                    </td>
+                  ))}
+
+                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                    <div className="flex justify-end gap-3">
+                      {actionPdf && <PdfModal pdfUrl={base64?.downloadUrl} />}
+
+                      {pathname === "/dashboard/projects" && (
+                        <button
+                          onClick={() => handleCheckboxChange(items.id, items)}
+                          className="bg-orange-500 rounded-md border p-2 hover:bg-orange-600 disabled:opacity-50"
+                          disabled={pending}
+                        >
+                          {pending ? (
+                            <>
+                              <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
+                            </>
+                          ) : (
+                            <>
+                              <CheckIcon className="w-5 text-white" />
+                            </>
+                          )}
+                        </button>
+                      )}
+                      {!notUpdate && (
+                        <Update id={items.id} route={"projects"} />
+                      )}
+                      {!notDelete && <Delete id={items.id} />}
+                      {editCardRoute && (
+                        <Link
+                          href={`/dashboard/cards/${id}/${lastSegmentUrl}/${items.id}/edit`}
+                          className="rounded-md border p-2 hover:bg-gray-100"
+                        >
+                          <PencilIcon className="w-5" />
+                        </Link>
+                      )}
+
+                      {redirect && (
+                        <button
+                          onClick={() => handleRedirectCards(items.id, items)}
+                          className="bg-green-500 rounded-md border p-2 hover:bg-green-600 disabled:opacity-50"
+                          disabled={pending}
+                        >
+                          {pending ? (
+                            <>
+                              <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
+                            </>
+                          ) : (
+                            <>
+                              <EnvelopeIcon className="w-5 text-white" />
+                            </>
+                          )}
+                        </button>
+                      )}
+                      {redirectAttachment && (
+                        <button
+                          onClick={() =>
+                            handleRedirectAttachment(items.id, items)
+                          }
+                          className="bg-green-500 rounded-md border p-2  hover:bg-green-600 disabled:opacity-50"
+                          disabled={pending}
+                        >
+                          {pending ? (
+                            <>
+                              <ArrowPathIcon className="animate-spin h-5 w-5 text-white" />
+                            </>
+                          ) : (
+                            <>
+                              <EnvelopeIcon className="w-5 text-white" />
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          )}
+          {!loading && (
+            <div className="flex justify-center items-center">
+              <div className="flex justify-center items-center text-white w-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                <span className="ml-2">Cargando...</span>
+              </div>
+            </div>
+          )}
+        </table>
+      </>
     );
   }
 }

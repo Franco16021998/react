@@ -24,16 +24,46 @@ export default async function Page({
 
   return (
     <div className="w-full">
-      <div className="flex w-full items-center justify-between">
+      <div
+        className="flex w-full items-center justify-between"
+        style={{
+          backgroundColor: "#171717",
+          padding: "1rem",
+          borderRadius: "1rem",
+        }}
+      >
         <h1 className={`${lusitana.className} text-2xl`}>Proyectos</h1>
       </div>
-      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="Buscar proyectos..." />
-        <Create label="Crear proyecto" route="/dashboard/projects/create" />
+      <div
+        className="grid grid-cols-1 gap-4 mt-4"
+        style={{
+          backgroundColor: "#171717",
+          padding: "1rem",
+          borderRadius: "1rem",
+        }}
+      >
+        <div className="grid grid-cols-4 gap-4 mt-4">
+          <div className="col-span-3">
+            <Search placeholder="Buscar proyectos..." />
+          </div>
+          <div>
+            <Create label="Crear proyecto" route="/dashboard/projects/create" />
+          </div>
+        </div>
+        <div>
+          <Suspense
+            key={query + currentPage}
+            fallback={<InvoicesTableSkeleton />}
+          >
+            <Table
+              query={query}
+              currentPage={currentPage}
+              elements={totalPages}
+            />
+          </Suspense>{" "}
+        </div>
       </div>
-      <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} elements={totalPages} />
-      </Suspense>
+
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages?.total} />
       </div>
