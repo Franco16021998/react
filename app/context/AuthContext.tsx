@@ -14,7 +14,8 @@ import { useRouter } from "next/navigation";
 import { cookies } from "next/headers";
 
 interface User {
-  userName: string;
+  username: string;
+  names: string;
   // Añade otras propiedades del usuario según sea necesario
 }
 
@@ -36,7 +37,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // Estado para el mensaje de error
 
   useEffect(() => {
-    console.log("aa");
     const initializeAuth = async () => {
       const token = document.cookie
         .split("; ")
@@ -49,7 +49,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.log(isValid);
         if (isValid) {
           const decoded: User = jwtDecode(token);
-          setUser(decoded);
+          const user = JSON.parse(localStorage.getItem("user") || "");
+          console.log("user", localStorage.getItem("user"));
+          setUser(user);
         } else {
           logout();
           // await refreshToken();
@@ -77,11 +79,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           },
         }
       );
-      console.log('prueba',data);
+      console.log("prueba", data);
       const decoded: User = jwtDecode(data.token);
-      setUser(decoded);
+      setUser(data);
       localStorage.setItem("token", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
       document.cookie = `token=${data.token}; path=/; secure; samesite=lax`;
       document.cookie = `refreshToken=${data.refreshToken}; path=/; secure; samesite=lax`;
@@ -135,7 +138,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       );
       const decoded: User = jwtDecode(data.token);
-      setUser(decoded);
+      setUser(data);
       localStorage.setItem("token", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
       document.cookie = `token=${data.token}; path=/; secure; samesite=lax`;

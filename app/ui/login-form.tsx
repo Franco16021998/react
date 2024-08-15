@@ -75,10 +75,10 @@ export default function LoginForm() {
         className="flex-1 rounded-lg px-6 pb-4 pt-8"
         style={{
           backgroundColor: "#171717",
-          color: "white",
+          color: "black",
         }}
       >
-        <h1 className={`${lusitana.className} mb-3 text-3xl`}>
+        <h1 className={`${lusitana.className} mb-3 text-3xl text-white`}>
           Iniciar sesión
         </h1>
         <div className="w-full">
