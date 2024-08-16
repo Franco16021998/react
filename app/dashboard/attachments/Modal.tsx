@@ -59,47 +59,73 @@ const Modal: React.FC<ModalProps> = ({ idLetter }) => {
 
   return (
     <div>
-      <button className="bg-blue-500" onClick={openModal}>
-        <ArchiveBoxIcon className="w-6" />
+      <button
+        className="flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition duration-300"
+        onClick={openModal}
+      >
+        <ArchiveBoxIcon className="w-6 h-6" />
       </button>
 
       {isModalOpen && (
-        <form onSubmit={handleSubmit}>
-          <div
-            className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center"
-            style={isDarkMode ? { color: "black" } : { color: "#F3F4F6" }}
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-4/12 relative"
           >
-            <div className="bg-white p-4 rounded">
-              <h2>PDF Nuevo</h2>
-              <div>
-                <label htmlFor="pdfFile">Archivo PDF</label>
-                <input
-                  name="file"
-                  id="pdfFile"
-                  type="file"
-                  onChange={handleFileChange}
-                />
-              </div>
-              <div>
-                <label htmlFor="comment">Comentario</label>
-                <textarea
-                  name="comentarios"
-                  id="comment"
-                  value={comentarios}
-                  onChange={(e) => setComentarios(e.target.value)}
-                ></textarea>
-              </div>
-              <div className="flex justify-end">
-                <button className="mr-2" onClick={closeModal}>
-                  Cerrar
-                </button>
-                <button type="submit" className="bg-blue-500 text-white">
-                  Grabar
-                </button>
-              </div>
+            <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
+              Nuevo Archivo PDF
+            </h2>
+
+            <div className="mb-4">
+              <label
+                htmlFor="pdfFile"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+              >
+                Selecciona un archivo PDF
+              </label>
+              <input
+                type="file"
+                id="pdfFile"
+                name="file"
+                onChange={handleFileChange}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+              />
             </div>
-          </div>
-        </form>
+
+            <div className="mb-4">
+              <label
+                htmlFor="comment"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+              >
+                Comentario
+              </label>
+              <textarea
+                id="comment"
+                name="comentarios"
+                value={comentarios}
+                onChange={(e) => setComentarios(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-black"
+                rows={4}
+              ></textarea>
+            </div>
+
+            <div className="flex justify-end space-x-4">
+              <button
+                type="button"
+                onClick={closeModal}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-300"
+              >
+                Cerrar
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+              >
+                Grabar
+              </button>
+            </div>
+          </form>
+        </div>
       )}
     </div>
   );
