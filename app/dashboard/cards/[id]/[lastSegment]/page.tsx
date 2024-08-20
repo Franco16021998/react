@@ -6,6 +6,8 @@ import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
 import { fetchCardsPages } from "@/app/actions/projects";
 import { Create } from "@/app/components/commons/ButtonsActions";
+import { redirect } from "next/navigation";
+import BackButton from "@/app/ui/cards/backButton";
 
 export default async function Page({
   params,
@@ -34,7 +36,9 @@ export default async function Page({
           borderRadius: "1rem",
         }}
       >
-        <h1 className={`${lusitana.className} text-2xl`}>Lista de cartas</h1>
+        <h1 className={`${lusitana.className} text-2xl`}>Lista de contratos</h1>
+        <BackButton previousPageUrl={params} /> {/* Puedes pasar la URL o dejarlo sin pasar */}
+       
       </div>
       <div
         className="grid grid-cols-1 gap-4 mt-4"
@@ -50,7 +54,7 @@ export default async function Page({
           </div>
           <div>
             <Create
-              label="Crear carta"
+              label="Crear contrato"
               route={`/dashboard/cards/${params?.id}/${params?.lastSegment}/create`}
             />
           </div>

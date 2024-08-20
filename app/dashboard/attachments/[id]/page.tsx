@@ -13,6 +13,7 @@ import Modal from "../Modal";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/outline";
 import { redirect } from "next/navigation";
 import ReturnIcon from "@/app/components/commons/ReturnArrow";
+import BackButton from "@/app/ui/attachments/backButton";
 
 export default async function Page({
   params,
@@ -31,8 +32,6 @@ export default async function Page({
   const attachments = await fetchAttachmentsPages(params.id);
   const base64 = await fetchGetAttachment(params.id);
 
-  console.log("base64", attachments);
-
   return (
     <div className="w-full">
       <div
@@ -44,6 +43,7 @@ export default async function Page({
         }}
       >
         <h1 className={`${lusitana.className} text-2xl`}>Lista de adjuntos</h1>
+        <BackButton />
       </div>
 
       <div

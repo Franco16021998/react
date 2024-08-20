@@ -1,6 +1,5 @@
-// components/Autocomplete.tsx
+import React, { useState, useRef, useEffect } from "react";
 import { RootState } from "@/app/theme/store";
-import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 type AutocompleteProps = {
@@ -11,9 +10,10 @@ type AutocompleteProps = {
 const Autocomplete: React.FC<AutocompleteProps> = ({ items, onSelect }) => {
   const [query, setQuery] = useState("");
   const [filteredItems, setFilteredItems] = useState(items);
+  const [openOptions, setOpenOptions] = useState(false);
   const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
 
-  const [openOptions, setOpenOptions] = useState(false);
+  const autocompleteRef = useRef<HTMLDivElement>(null);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -24,22 +24,43 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ items, onSelect }) => {
       item.description.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredItems(filtered);
+    setOpenOptions(true);
   };
 
   const handleSelect = (item: { id: number; description: string }) => {
     setQuery(item.description);
-    // setFilteredItems([]);
     setOpenOptions(false);
     onSelect(item);
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (autocompleteRef.current && !autocompleteRef.current.contains(event.target as Node)) {
+      setOpenOptions(false);
+    }
+  };
+
+  const handleEscKey = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      setOpenOptions(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscKey);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscKey);
+    };
+  }, []);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={autocompleteRef}>
       <input
         type="text"
         value={query}
         onChange={handleInputChange}
-        onClick={() => setOpenOptions(true)}
         className="w-full px-4 py-2 border border-gray-300 rounded"
         style={
           isDarkMode
@@ -51,9 +72,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ items, onSelect }) => {
       {openOptions && (
         <ul
           className="absolute w-full mt-1 bg-white border border-gray-300 rounded shadow-lg"
-          style={{
-            zIndex: 100000,
-          }}
+          style={{ zIndex: 1000 }}
         >
           {filteredItems.map((item) => (
             <li

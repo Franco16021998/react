@@ -16,6 +16,9 @@ import { cookies } from "next/headers";
 interface User {
   username: string;
   names: string;
+  user: any;
+  userType: string;
+  lastname: string;
   // Añade otras propiedades del usuario según sea necesario
 }
 
@@ -50,7 +53,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (isValid) {
           const decoded: User = jwtDecode(token);
           const user = JSON.parse(localStorage.getItem("user") || "");
-          console.log("user", localStorage.getItem("user"));
+          console.log("user", user);
           setUser(user);
         } else {
           logout();

@@ -19,11 +19,11 @@ export default async function Page({
       <Breadcrumbs
         breadcrumbs={[
           {
-            label: "Cartas",
+            label: "Contratos",
             href: `/dashboard/cards/${params?.id}/${params.lastSegment}`,
           },
           {
-            label: "Editar cartas",
+            label: "Editar contratos",
             href: `/dashboard/cards/${params?.id}/${params.lastSegment}/${params.idCard}/edit`,
             active: true,
           },

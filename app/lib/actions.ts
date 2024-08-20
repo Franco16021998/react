@@ -310,11 +310,6 @@ export async function editCard(
   prevState: StateCard,
   formData: FormData
 ) {
-  console.log("idCard", idCard);
-  console.log("idProject", idProject);
-  console.log("idEntregable", idEntregable);
-  console.log("formData", formData);
-
   const validatedFields = UpdateCard.safeParse({
     reference: formData.get("reference"),
     fechalimite: formData.get("fechalimite"),
@@ -379,13 +374,6 @@ export async function createCard(prevState: StateCard, formData: FormData) {
   }
   const { reference, fechalimite, entregable_id, proyecto_id } =
     validatedFields.data;
-
-  console.log("asdasdasdas", {
-    reference: reference,
-    fechalimite: fechalimite,
-    entregable_id: entregable_id,
-    proyecto_id: proyecto_id,
-  });
 
   try {
     const token = cookies().get("token")?.value;
@@ -469,5 +457,38 @@ export async function deleteInvoice(id: string) {
     return { message: "Deleted Invoice." };
   } catch (error) {
     return { message: "Database Error: Failed to Delete Invoice." };
+  }
+}
+
+export async function deleteItem(id: string) {
+  try {
+    const token = cookies().get("token")?.value;
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      const response = await axios.delete(
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/projects/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    revalidatePath("/dashboard/projects");
+
+  } catch (error) {
+    console.error("Error fetching projects:", error);
   }
 }

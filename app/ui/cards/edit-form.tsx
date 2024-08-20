@@ -83,7 +83,7 @@ export default function EditCardForm({
         >
           Cancel
         </Link>
-        <Button type="submit">Editar Carta</Button>
+        <Button type="submit">Editar Contrato</Button>
       </div>
     </form>
   );

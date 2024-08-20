@@ -75,12 +75,12 @@ export default async function Page({
               elements={totalPages}
             />
           </Suspense>{" "}
-          <div className="mt-5 flex w-full justify-center">
+          {/* <div className="mt-5 flex w-full justify-center">
             <Pagination
               totalPages={totalPages?.total}
               currentPageChange={currentPage}
             />
-          </div>
+          </div> */}
         </div>
       </div>
 

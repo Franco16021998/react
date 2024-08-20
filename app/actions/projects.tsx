@@ -65,6 +65,8 @@ const calcularCantidadDeHojas = (total: number, limit: number): number => {
   return Math.ceil(total / limit);
 };
 
+let lastQuery: string | null = null;
+
 export async function fetchProjectsPages(
   query: string,
   currentPage: number
@@ -72,10 +74,17 @@ export async function fetchProjectsPages(
   try {
     const token = cookies().get("token")?.value;
 
+    // Verifica si el query es igual al anterior
+    if (query === lastQuery) {
+      return { list: [], total: 0 };
+    }
+
+    // Actualiza lastQuery con el nuevo query
+    lastQuery = query;
+
     // if (!token) {
     //   throw new Error("No token found");
     // }
-    console.log("token", "asdasdasdas");
 
     const { data } = await axios.post(
       "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
@@ -107,6 +116,8 @@ export async function fetchProjectsPages(
     console.error("Error fetching projects:", error);
     // throw new Error("Failed to fetch projects.");
   }
+
+  return { list: [], total: 0 };
 }
 
 export async function fetchDeliveryPages(
@@ -133,7 +144,7 @@ export async function fetchDeliveryPages(
 
     if (data === "Token is valid") {
       const response = await axios.get(
-        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/deliverable?search=${query}&page=${currentPage}&limit=10`,
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/deliverable?search=${query}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -145,7 +156,7 @@ export async function fetchDeliveryPages(
       console.log("response", response?.data);
 
       return {
-        list: response?.data?.deliverables,
+        list: response?.data,
         total: calcularCantidadDeHojas(response?.data?.total, 10),
       };
     }

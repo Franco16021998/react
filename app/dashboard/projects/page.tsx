@@ -64,9 +64,9 @@ export default async function Page({
         </div>
       </div>
 
-      <div className="mt-5 flex w-full justify-center">
+      {/* <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages?.total} />
-      </div>
+      </div> */}
     </div>
   );
 }

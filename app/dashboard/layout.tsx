@@ -33,7 +33,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
         <div className="flex items-center">
           {/* <img src="ruta-a-la-imagen-del-usuario" alt="Usuario" className="w-8 h-8 rounded-full"> */}
-          <span className="ml-2 text-white">{user?.names}</span>
+          <span className="ml-2 text-white">
+            {user?.user
+              ? `${user?.user?.names}  ${user?.user?.lastname} -  ${user?.user?.userType} `
+              : `${user?.names}  ${user?.lastname} -  ${user?.userType} `}
+          </span>
         </div>
       </div>
 

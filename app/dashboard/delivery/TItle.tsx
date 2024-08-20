@@ -12,6 +12,7 @@ type ProjectTableProps = {
 
 const ProjectTable: React.FC<ProjectTableProps> = ({ project, projects }) => {
   const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
+  const [title, setTitle] = useState<any | null>(project);
 
   const [data, setData] = useState<{
     code: string;
@@ -22,6 +23,17 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ project, projects }) => {
     id: number;
     description: string;
   } | null>(null);
+
+  console.log("selectedProject", selectedProject);
+
+  useEffect(() => {
+    if (selectedProject) {
+      // Actualiza la URL sin recargar la página
+      const newUrl = `/dashboard/delivery/${selectedProject.id}`;
+      setTitle(selectedProject);
+      window.history.replaceState(null, "", newUrl);
+    }
+  }, [selectedProject]);
 
   const handleSelect = (project: { id: number; description: string }) => {
     setSelectedProject(project);
@@ -51,8 +63,8 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ project, projects }) => {
         </thead>
         <tbody className="bg-white">
           <tr>
-            <td className="px-4 py-4 sm:pl-6">{project?.code}</td>
-            <td className="px-4 py-4 sm:pl-6">{project?.description}</td>
+            <td className="px-4 py-4 sm:pl-6">{title?.code}</td>
+            <td className="px-4 py-4 sm:pl-6">{title?.description}</td>
           </tr>
         </tbody>
       </table>
