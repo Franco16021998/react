@@ -11,6 +11,7 @@ import {
   fetchProjectsAll,
 } from "@/app/actions/projects";
 import ProjectTable from "../TItle";
+import BackButton from "@/app/ui/delivery/backButton";
 
 export default async function Page({
   params,
@@ -43,6 +44,7 @@ export default async function Page({
         <h1 className={`${lusitana.className} text-2xl`}>
           Lista de entregables
         </h1>
+        <BackButton previousPageUrl={params} />
       </div>
       {/* <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Buscar proyectos..." />

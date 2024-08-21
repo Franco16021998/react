@@ -75,8 +75,8 @@ export async function fetchProjectsPages(
     const token = cookies().get("token")?.value;
 
     // Verifica si el query es igual al anterior
-    if (query === lastQuery) {
-      return { list: [], total: 0 };
+    if (query === "") {
+      return null;
     }
 
     // Actualiza lastQuery con el nuevo query
@@ -107,10 +107,14 @@ export async function fetchProjectsPages(
         }
       );
 
-      return {
-        list: response?.data?.projects,
-        total: calcularCantidadDeHojas(response?.data?.total, 10),
-      };
+      if (response?.data?.projects.length === 0) {
+        return { list: [], total: 0 };
+      } else {
+        return {
+          list: response?.data?.projects,
+          total: calcularCantidadDeHojas(response?.data?.total, 10),
+        };
+      }
     }
   } catch (error) {
     console.error("Error fetching projects:", error);
