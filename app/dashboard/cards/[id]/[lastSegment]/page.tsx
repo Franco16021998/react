@@ -36,7 +36,7 @@ export default async function Page({
           borderRadius: "1rem",
         }}
       >
-        <h1 className={`${lusitana.className} text-2xl`}>Lista de contratos</h1>
+        <h1 className={`${lusitana.className} text-2xl`}>Lista de documentos</h1>
         <BackButton previousPageUrl={params} /> {/* Puedes pasar la URL o dejarlo sin pasar */}
        
       </div>
@@ -54,7 +54,7 @@ export default async function Page({
           </div>
           <div>
             <Create
-              label="Crear contrato"
+              label="Crear nuevo documento"
               route={`/dashboard/cards/${params?.id}/${params?.lastSegment}/create`}
             />
           </div>

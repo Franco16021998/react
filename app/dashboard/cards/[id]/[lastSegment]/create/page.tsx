@@ -13,11 +13,11 @@ export default async function Page({
       <Breadcrumbs
         breadcrumbs={[
           {
-            label: "Cartas",
+            label: "Documentos",
             href: `/dashboard/cards/${params.id}/${params.lastSegment}`,
           },
           {
-            label: "Crear Carta",
+            label: "Crear nuevo documento",
             href: `/dashboard/cards/${params.id}/${params.lastSegment}/create`,
             active: true,
           },

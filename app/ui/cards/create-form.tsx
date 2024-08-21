@@ -86,7 +86,7 @@ export default function Form({
         >
           Cancel
         </Link>
-        <Button type="submit">Crear Carta</Button>
+        <Button type="submit">Crear Documento</Button>
       </div>
     </form>
   );
