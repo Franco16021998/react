@@ -13,6 +13,43 @@ import { editCard, State, StateCard } from "@/app/lib/actions";
 import { useActionState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/theme/store";
+import { useFormStatus } from "react-dom";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" disabled={pending}>
+      {pending ? (
+        <div className="flex items-center">
+          <svg
+            className="animate-spin h-5 w-5 mr-2 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            ></path>
+          </svg>
+          Guardando...
+        </div>
+      ) : (
+        "Editar Documento"
+      )}
+    </Button>
+  );
+}
 
 export default function EditCardForm({
   card,
@@ -31,10 +68,9 @@ export default function EditCardForm({
     idEntregable
   );
   const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
+  console.log(state)
   const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
   const defaultDate = card.fechalimite.split("T")[0];
-
-  console.log("card", card);
 
   return (
     <form action={formAction}>
@@ -78,12 +114,12 @@ export default function EditCardForm({
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
-          href="/dashboard/invoices"
+          href={`/dashboard/cards/${idEntregable}/${idProject}`}
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Cancel
         </Link>
-        <Button type="submit">Editar Contrato</Button>
+        <SubmitButton />
       </div>
     </form>
   );

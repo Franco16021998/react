@@ -235,13 +235,18 @@ export async function editProject(
 }
 
 export async function createAttachment(
+  fileContent: string,
+  fileName: string,
+  comentarios: string,
+  idLetter: string,
   prevState: StateAttachment,
   formData: FormData
 ) {
   const validatedFields = CreateAttachment.safeParse({
-    fileContent: formData.get("fileContent"),
-    fileName: formData.get("fileName"),
-    comentarios: formData.get("comentarios"),
+    fileContent: fileContent,
+    fileName: fileName,
+    comentarios: comentarios,
+    idLetter: idLetter,
     // idLetter: formData.get("idLetter"),
   });
 
@@ -251,7 +256,7 @@ export async function createAttachment(
       message: "Missing Fields. Failed to Create Invoice.",
     };
   }
-  const { fileContent, fileName, comentarios } = validatedFields.data;
+  // const { fileContent, fileName, comentarios } = validatedFields.data;
 
   try {
     const token = cookies().get("token")?.value;
@@ -268,9 +273,7 @@ export async function createAttachment(
 
     if (data === "Token is valid") {
       const response = await axios.patch(
-        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters/${formData.get(
-          "idLetter"
-        )}?action=upload`,
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters/${idLetter}?action=upload`,
         {
           fileContent: fileContent,
           fileName: fileName,
@@ -289,8 +292,8 @@ export async function createAttachment(
     // throw new Error("Failed to fetch projects.");
   }
 
-  revalidatePath("/dashboard/attachments/" + formData.get("idLetter"));
-  redirect("/dashboard/attachments/" + formData.get("idLetter"));
+  revalidatePath("/dashboard/attachments/" + idLetter);
+  redirect("/dashboard/attachments/" + idLetter);
 
   // Test it out:
 }
@@ -337,7 +340,7 @@ export async function editCard(
     );
 
     if (data === "Token is valid") {
-      await axios.put(
+      const dataEdit = await axios.put(
         `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters/${idCard}`,
         {
           referencia: reference,
@@ -349,6 +352,7 @@ export async function editCard(
           },
         }
       );
+      console.log("dataEdit", dataEdit);
     }
   } catch (error) {
     console.error("Error fetching projects:", error);
@@ -358,12 +362,19 @@ export async function editCard(
   redirect("/dashboard/cards/" + idEntregable + "/" + idProject);
 }
 
-export async function createCard(prevState: StateCard, formData: FormData) {
+export async function createCard(
+  entregable_id: string,
+  proyecto_id: string,
+  prevState: StateCard,
+  formData: FormData
+) {
+  console.log("reference:", formData.get("reference"));
+
   const validatedFields = CreateCard.safeParse({
     reference: formData.get("reference"),
     fechalimite: formData.get("fechalimite"),
-    entregable_id: formData.get("entregable_id"),
-    proyecto_id: formData.get("proyecto_id"),
+    entregable_id: entregable_id,
+    proyecto_id: proyecto_id,
   });
 
   if (!validatedFields.success) {
@@ -372,8 +383,7 @@ export async function createCard(prevState: StateCard, formData: FormData) {
       message: "Missing Fields. Failed to Create Invoice.",
     };
   }
-  const { reference, fechalimite, entregable_id, proyecto_id } =
-    validatedFields.data;
+  const { reference, fechalimite } = validatedFields.data;
 
   try {
     const token = cookies().get("token")?.value;
@@ -487,7 +497,40 @@ export async function deleteItem(id: string) {
     }
 
     revalidatePath("/dashboard/projects");
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+  }
+}
 
+export async function deleteAttachment(id: string) {
+  try {
+    const token = cookies().get("token")?.value;
+
+    console.log("response123123", id);
+
+    const { data } = await axios.post(
+      "https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/authentication/validateToken",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data === "Token is valid") {
+      const response = await axios.delete(
+        `https://339r05d9n5.execute-api.us-east-1.amazonaws.com/Prod/letters/${id}?action=deletepdf`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    revalidatePath("/dashboard/attachments" + id);
   } catch (error) {
     console.error("Error fetching projects:", error);
   }

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Create, Update, Delete } from "./ButtonsActions";
+import { Create, Update, Delete, DeleteAttachment } from "./ButtonsActions";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -37,6 +37,7 @@ export default function TableModel({
   editCardRoute,
   id,
   lastSegmentUrl,
+  deleteAttachment,
 }: {
   elements: Element[];
   columns: { name: string; key: string }[];
@@ -49,6 +50,7 @@ export default function TableModel({
   editCardRoute?: boolean;
   id?: string;
   lastSegmentUrl?: string;
+  deleteAttachment?: boolean;
 }) {
   const pathname = usePathname();
   const segments = pathname.split("/");
@@ -250,6 +252,7 @@ export default function TableModel({
                         <Update id={items.id} route={"projects"} />
                       )}
                       {!notDelete && <Delete id={items.id} />}
+                      {deleteAttachment && <DeleteAttachment id={items.id} />}
                       {editCardRoute && (
                         <Link
                           href={`/dashboard/cards/${id}/${lastSegmentUrl}/${items.id}/edit`}

@@ -248,9 +248,16 @@ export async function fetchCardsPages(
         }
       );
 
-      console.log("response", response?.data);
+      const list = response?.data.map((item: any) => {
+        return {
+          ...item,
+          fecha_subida_pdf: item.fecha_subida_pdf
+            ? new Date(item.fecha_subida_pdf).toLocaleString()
+            : "",
+        };
+      });
 
-      return { list: response?.data };
+      return { list: list };
     }
 
     // console.log("aaa");
@@ -294,10 +301,19 @@ export async function fetchAttachmentsPages(id: string): Promise<any> {
         }
       );
 
-      const list = [];
-      list.push(response?.data);
+      const itemFinal = {
+        ...response?.data,
+        fecha_subida_pdf:
+          response?.data.fecha_subida_pdf !== null
+            ? new Date(response?.data.fecha_subida_pdf).toLocaleString()
+            : "",
+      };
 
-      console.log("response", response?.data);
+      console.log("12312", itemFinal);
+
+      const list = [];
+      list.push(itemFinal);
+
 
       return { list: list };
     }

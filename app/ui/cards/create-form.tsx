@@ -1,13 +1,48 @@
 "use client";
 
-import { CustomerField } from "@/app/lib/definitions";
 import Link from "next/link";
 import { Button } from "@/app/ui/button";
 import { createCard, StateCard } from "@/app/lib/actions";
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/theme/store";
-import { usePathname } from "next/navigation";
+import { useFormStatus } from "react-dom";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" disabled={pending}>
+      {pending ? (
+        <div className="flex items-center">
+          <svg
+            className="animate-spin h-5 w-5 mr-2 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            ></path>
+          </svg>
+          Guardando...
+        </div>
+      ) : (
+        "Crear Documento"
+      )}
+    </Button>
+  );
+}
 
 export default function Form({
   entregableId,
@@ -18,27 +53,14 @@ export default function Form({
 }) {
   const initialState: StateCard = { message: null, errors: {} };
 
-  const [state, formAction] = useActionState(createCard, initialState);
+  const createCardAction = createCard.bind(null, entregableId, projectId);
+  const [state, formAction] = useActionState(createCardAction, initialState);
+
   const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
-  const router = usePathname();
-  const [reference, setReference] = useState<string>("");
-  const [fechalimite, setFechalimite] = useState<string>("");
-  const params = router.split("/");
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append("reference", reference);
-    formData.append("fechalimite", fechalimite);
-    formData.append("entregable_id", params?.[3]);
-    formData.append("proyecto_id", params?.[4]);
-
-    // Llama a formAction con los datos necesarios
-    formAction(formData);
-  };
+  const { pending } = useFormStatus();
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form action={formAction}>
       <div
         className="rounded-md bg-gray-50 p-4 md:p-6"
         style={isDarkMode ? { color: "black" } : { color: "#F3F4F6" }}
@@ -51,11 +73,11 @@ export default function Form({
             <div className="relative">
               <input
                 id="reference"
-                name="referencia"
-                value={reference}
+                name="reference"
+                // value={reference}
                 className="peer block w-full rounded-md border border-gray-200 py-2  text-sm outline-2 placeholder:text-gray-500"
                 required
-                onChange={(e) => setReference(e.target.value)}
+                // onChange={(e) => setReference(e.target.value)}
               />
             </div>
           </div>
@@ -70,10 +92,10 @@ export default function Form({
                 id="date"
                 name="fechalimite"
                 type="date"
-                value={fechalimite}
+                // value={fechalimite}
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                 required
-                onChange={(e) => setFechalimite(e.target.value)}
+                // onChange={(e) => setFechalimite(e.target.value)}
               />
             </div>
           </div>
@@ -86,7 +108,7 @@ export default function Form({
         >
           Cancel
         </Link>
-        <Button type="submit">Crear Documento</Button>
+        <SubmitButton />
       </div>
     </form>
   );

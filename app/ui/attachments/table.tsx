@@ -53,6 +53,8 @@ export default async function Table({
             notUpdate
             actionPdf
             base64={base64}
+            notDelete
+            deleteAttachment
           />
         </div>
       </div>
