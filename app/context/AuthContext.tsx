@@ -91,6 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       document.cookie = `token=${data.token}; path=/; secure; samesite=lax`;
       document.cookie = `refreshToken=${data.refreshToken}; path=/; secure; samesite=lax`;
+      setErrorMessage("")
 
       router.push("/dashboard/projects");
     } catch (error) {
