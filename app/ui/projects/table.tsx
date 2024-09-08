@@ -27,7 +27,7 @@ export default async function InvoicesTable({
 
   const columns = [
     {
-      name: "Codigo",
+      name: "OT",
       key: "code",
     },
     {

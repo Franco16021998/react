@@ -27,7 +27,7 @@ const links = [
   //   icon: UserIcon,
   // },
   {
-    name: "Proyectos",
+    name: "SGI",
     href: "/dashboard/projects",
     icon: UserIcon,
   },
